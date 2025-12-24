@@ -52,7 +52,21 @@
                         </div>
                     </div>
                     
-                    <a th:href="@{/builder-basics}" href="/builder-basics" class="btn btn-primary" style="margin-top: 1rem; padding: 1rem 3rem; font-size: 1.1rem;">Continue</a>
+                    <a th:with="firstname=${firstname}, lastname=${lastname}" 
+                       th:href="@{/builder-basics(firstname=${firstname}, lastname=${lastname})}" 
+                       th:if="${firstname != null && lastname != null}" 
+                       href="/builder-basics" 
+                       class="btn btn-primary" 
+                       style="margin-top: 1rem; padding: 1rem 3rem; font-size: 1.1rem;">
+                        Continue
+                    </a>
+                    <a th:unless="${firstname != null && lastname != null}" 
+                       th:href="@{/builder-basics}" 
+                       href="/builder-basics" 
+                       class="btn btn-primary" 
+                       style="margin-top: 1rem; padding: 1rem 3rem; font-size: 1.1rem;">
+                        Continue
+                    </a>
                 </div>
             </div>
         </main>

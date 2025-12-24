@@ -62,23 +62,23 @@
             <div style="margin-top: 2rem;">
                 <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 2rem;">
                     <span style="background: #fef3c7; color: var(--text-dark); padding: 0.25rem 0.75rem; border-radius: 4px; font-weight: 700; font-size: 0.8rem;">Work Experience</span>
-                    <button style="border: none; background: #e2e8f0; color: #64748b; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer;">×</button>
                 </div>
 
-                <!-- Experience Card 1 -->
-                <article class="experience-card animate-fade">
+                <!-- Iterate over experiences -->
+                <article th:each="exp : ${experiences}" class="experience-card animate-fade">
                     <div class="exp-body">
                         <div class="exp-details">
                             <a href="#" class="exp-action-btn" style="color: var(--primary); margin-bottom: 0.5rem;">
                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
                                 Edit
                             </a>
-                            <h4>Senior Software Engineer, Monocept Pvt Ltd</h4>
-                            <p class="meta">Hyderabad</p>
-                            <p class="meta">Jun 2023 - Oct 2023</p>
+                            <h4 th:text="${exp.jobTitle + ', ' + exp.company}">Senior Software Engineer, Monocept Pvt Ltd</h4>
+                            <p class="meta" th:text="${exp.duration}">Jun 2023 - Oct 2023</p>
                         </div>
-                        <div class="exp-description-placeholder">
-                            <span>+ Add Description</span>
+                        <div class="exp-description">
+                            <ul th:if="${exp.description != null}">
+                                <li th:each="desc : ${exp.description}" th:text="${desc}"></li>
+                            </ul>
                         </div>
                     </div>
                     <div class="exp-footer">
@@ -89,43 +89,13 @@
                         <div class="exp-actions">
                             <a href="#" class="exp-action-btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg> Edit</a>
                             <a href="#" class="exp-action-btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg> Delete</a>
-                            <a href="#" class="exp-action-btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="5 9 2 12 5 15"></polyline><polyline points="9 5 12 2 15 5"></polyline><polyline points="15 19 12 22 9 19"></polyline><polyline points="19 9 22 12 19 15"></polyline><line x1="2" y1="12" x2="22" y2="12"></line><line x1="12" y1="2" x2="12" y2="22"></line></svg> Move</a>
-                        </div>
-                    </div>
-                </article>
-
-                <!-- Experience Card 2 -->
-                <article class="experience-card animate-fade" style="animation-delay: 0.1s;">
-                    <div class="exp-body">
-                        <div class="exp-details">
-                            <a href="#" class="exp-action-btn" style="color: var(--primary); margin-bottom: 0.5rem;">
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
-                                Edit
-                            </a>
-                            <h4>Senior Software Engineer, Charter Global Technologies Pvt Ltd</h4>
-                            <p class="meta">Hyderabad</p>
-                            <p class="meta">Jun 2020 - Apr 2023</p>
-                        </div>
-                        <div class="exp-description-placeholder">
-                            <span>+ Add Description</span>
-                        </div>
-                    </div>
-                    <div class="exp-footer">
-                        <div class="suggestion-pill">
-                            <span style="width: 8px; height: 8px; background: #ef4444; border-radius: 50%;"></span>
-                            See suggestions
-                        </div>
-                        <div class="exp-actions">
-                            <a href="#" class="exp-action-btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg> Edit</a>
-                            <a href="#" class="exp-action-btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg> Delete</a>
-                            <a href="#" class="exp-action-btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="5 9 2 12 5 15"></polyline><polyline points="9 5 12 2 15 5"></polyline><polyline points="15 19 12 22 9 19"></polyline><polyline points="19 9 22 12 19 15"></polyline><line x1="2" y1="12" x2="22" y2="12"></line><line x1="12" y1="2" x2="12" y2="22"></line></svg> Move</a>
                         </div>
                     </div>
                 </article>
 
                 <div class="full-width" style="display: flex; justify-content: space-between; margin-top: 4rem;">
-                    <a th:href="@{/builder-experience}" href="/builder-experience" class="btn btn-outline" style="padding: 0.75rem 3rem;">Back</a>
-                    <a th:href="@{/builder-education}" href="/builder-education" class="btn btn-primary" style="padding: 0.75rem 4rem;">Continue</a>
+                    <a th:href="@{/builder/experience}" class="btn btn-outline" style="padding: 0.75rem 3rem;">Back</a>
+                    <a th:href="@{/builder/education}" class="btn btn-primary" style="padding: 0.75rem 4rem;">Continue</a>
                 </div>
             </div>
         </main>

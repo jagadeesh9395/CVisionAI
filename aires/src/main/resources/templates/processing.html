@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Processing Your Resume - CVisionAI</title>
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <style>
+        .processing-container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 2rem;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
+        }
+        .processing-icon {
+            font-size: 4rem;
+            margin-bottom: 2rem;
+            color: #4f46e5;
+        }
+        .processing-steps {
+            max-width: 600px;
+            margin: 2rem auto;
+            text-align: left;
+        }
+        .step {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            opacity: 0;
+            transform: translateX(-20px);
+            animation: slideIn 0.5s forwards;
+        }
+        .step-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #4f46e5;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 1rem;
+            flex-shrink: 0;
+        }
+        .step-content {
+            background: white;
+            padding: 1rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            flex-grow: 1;
+        }
+        @keyframes slideIn {
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        .processing-spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #4f46e5;
+            border-radius: 50%;
+            animation: spin 1.5s linear infinite;
+            margin: 2rem auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .processing-status {
+            color: #4f46e5;
+            font-weight: 500;
+            font-size: 1.2rem;
+            margin-top: 1rem;
+            text-align: center;
+        }
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+            max-width: 1000px;
+            width: 100%;
+        }
+        .feature-card {
+            background: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px rgba(0,0,0,0.1);
+        }
+        .feature-icon {
+            font-size: 2rem;
+            color: #4f46e5;
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="processing-container">
+        <div class="processing-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" fill="currentColor" class="bi bi-hourglass-split" viewBox="0 0 16 16">
+                <path d="M2.5 15a.5.5 0 1 1 0-1h1v-1a4.5 4.5 0 0 1 2.557-4.06c.29-.139.443-.377.443-.59v-.7c0-.213-.153-.451-.443-.59A4.5 4.5 0 0 1 3.5 3V2h-1a.5.5 0 0 1 0-1h11a.5.5 0 0 1 0 1h-1v1a4.5 4.5 0 0 1-2.557 4.06c-.29.139-.443.377-.443.59v.7c0 .213.153.451.443.59A4.5 4.5 0 0 1 12.5 13v1h1a.5.5 0 0 1 0 1h-11zm2-13v1c0 .537.12 1.045.337 1.5h6.326c.216-.455.337-.963.337-1.5V2h-7zm3 6.35c0 .701-.478 1.236-1.011 1.492A3.5 3.5 0 0 0 4.5 13s.866-1.299 3-1.48V8.35zm1 0v3.17c2.134.181 3 1.48 3 1.48a3.5 3.5 0 0 0-1.989-3.158C8.978 9.586 8.5 9.052 8.5 8.351z"/>
+            </svg>
+        </div>
+        <h1 class="mb-4">Processing Your Resume</h1>
+        <p class="lead mb-4">We're analyzing your resume to create the best possible version</p>
+        
+        <div class="processing-spinner"></div>
+        <div class="processing-status">Processing your resume...</div>
+        
+        <div class="processing-steps">
+            <div class="step" style="animation-delay: 0.2s">
+                <div class="step-icon">1</div>
+                <div class="step-content">Extracting text and formatting from your resume</div>
+            </div>
+            <div class="step" style="animation-delay: 0.6s">
+                <div class="step-icon">2</div>
+                <div class="step-content">Analyzing your skills and experience</div>
+            </div>
+            <div class="step" style="animation-delay: 1s">
+                <div class="step-icon">3</div>
+                <div class="step-content">Optimizing content for ATS compatibility</div>
+            </div>
+            <div class="step" style="animation-delay: 1.4s">
+                <div class="step-icon">4</div>
+                <div class="step-content">Preparing your resume preview</div>
+            </div>
+        </div>
+        
+        <div class="features-grid mt-5">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+                        <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
+                    </svg>
+                </div>
+                <h4>Smart Analysis</h4>
+                <p>Our AI analyzes your resume to highlight your strengths and suggest improvements.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-check-circle" viewBox="0 0 16 16">
+                        <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                        <path d="M10.97 4.97a.235.235 0 0 0-.02.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-1.071-1.05z"/>
+                    </svg>
+                </div>
+                <h4>ATS Optimized</h4>
+                <p>Your resume will be optimized to pass through Applicant Tracking Systems (ATS) with flying colors.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-eye" viewBox="0 0 16 16">
+                        <path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8zM1.173 8a13.133 13.133 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5c2.12 0 3.879 1.168 5.168 2.457A13.133 13.133 0 0 1 14.828 8c-.058.087-.122.183-.195.288-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5c-2.12 0-3.879-1.168-5.168-2.457A13.134 13.134 0 0 1 1.172 8z"/>
+                        <path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5zM4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0z"/>
+                    </svg>
+                </div>
+                <h4>Professional Preview</h4>
+                <p>Get a beautiful, professional-looking resume that stands out to recruiters.</p>
+            </div>
+        </div>
+    </div>
+
+    <script th:inline="javascript">
+        document.addEventListener('DOMContentLoaded', function() {
+            // Animate steps
+            const steps = document.querySelectorAll('.step');
+            steps.forEach((step, index) => {
+                setTimeout(() => {
+                    step.style.opacity = '1';
+                    step.style.transform = 'translateX(0)';
+                }, 200 * index);
+            });
+            
+            // Check processing status every 2 seconds
+            const checkStatus = setInterval(() => {
+                fetch(/*[[@{/builder/check-status}]]*/ '/builder/check-status')
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.complete) {
+                            clearInterval(checkStatus);
+                            // Add a small delay before redirecting for better UX
+                            setTimeout(() => {
+                                window.location.href = /*[[@{/builder/greet}]]*/ '/builder/greet';
+                            }, 1000);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error checking status:', error);
+                        clearInterval(checkStatus);
+                        // Redirect to error page if there's an issue
+                        window.location.href = /*[[@{/builder/upload-error}]]*/ '/builder/upload-error';
+                    });
+            }, 2000);
+            
+            // Set a timeout in case something goes wrong (10 seconds)
+            setTimeout(() => {
+                clearInterval(checkStatus);
+                window.location.href = /*[[@{/builder/greet}]]*/ '/builder/greet';
+            }, 10000);
+        });
+    </script>
+</body>
+</html>

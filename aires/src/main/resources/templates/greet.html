@@ -22,12 +22,18 @@
                     </div>
                 </div>
                 <div class="info-text">
-                    <h2>Nice to meet you, <span th:text="${userName}">Jagadeeshwar</span></h2>
-                    <p>You are currently a <b>Senior Software Engineer</b> at <b>Monocept Pvt Ltd</b>.</p>
-                    <p>Your extensive experience in <b>Java development</b>, particularly with <b>Spring Boot</b> and <b>Microservices</b>, is noteworthy.</p>
-                    <p>We will tailor your resume-building experience to emphasize your strong background in <b>application development and cloud technologies</b>.</p>
+                    <h2>Nice to meet you, <span th:text="${fullName}">Jagadeeshwar Karanam</span></h2>
+                    <p th:if="${latestCompany != null}">
+                        You are currently a <b th:text="${latestCompany.role}">Senior Software Engineer</b> 
+                        at <b th:text="${latestCompany.name}">Monocept Pvt Ltd</b>
+                        <span th:if="${latestCompany.location != null}"> in <b th:text="${latestCompany.location}">Hyderabad</b></span>.
+                    </p>
+                    <p th:if="${latestCompany != null and latestCompany.duration != null}">
+                        Duration: <b th:text="${latestCompany.duration}">9th June 2023 – 31st October 2023</b>
+                    </p>
+                    <p>We will help you build an impressive resume that highlights your professional experience and skills.</p>
                     
-                    <a th:href="@{/analysis}" href="/analysis" class="btn btn-primary" style="margin-top: 2rem; padding: 1rem 3rem; font-size: 1.1rem;">Continue</a>
+                    <a th:href="@{/analysis}" href="/analysis" class="btn btn-primary" style="margin-top: 2rem; padding: 1rem 3rem; font-size: 1.1rem;">Continue to Build Resume</a>
                 </div>
             </div>
         </main>

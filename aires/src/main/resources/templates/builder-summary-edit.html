@@ -39,17 +39,20 @@
             </header>
 
             <div style="margin-top: 2rem;">
-                <div style="position: relative; margin-bottom: 2rem;">
-                    <button class="btn btn-outline" style="position: absolute; right: 1rem; top: 1rem; font-size: 0.75rem; padding: 0.5rem 1rem;">
-                        <span style="margin-right:0.5rem;">🪄</span> AI Re-write
-                    </button>
-                    <textarea class="summary-editor" placeholder="Write your professional summary here...">Experienced Senior Software Engineer with a demonstrated history of working in the application development and cloud technologies. Skilled in Java development, particularly with Spring Boot and Microservices. Strong engineering professional with a background in building scalable enterprise applications and cloud-native solutions.</textarea>
-                </div>
+                <form th:action="@{/builder/finalize}" method="post">
+                    <div style="position: relative; margin-bottom: 2rem;">
+                        <button type="button" class="btn btn-outline" style="position: absolute; right: 1rem; top: 1rem; font-size: 0.75rem; padding: 0.5rem 1rem;">
+                            <span style="margin-right:0.5rem;">🪄</span> AI Re-write
+                        </button>
+                        <textarea name="summary" class="summary-editor" placeholder="Write your professional summary here..." 
+                                  th:text="${#strings.listJoin(summary, ' ')}">Experienced Senior Software Engineer...</textarea>
+                    </div>
 
-                <div class="full-width" style="display: flex; justify-content: space-between; margin-top: 4rem;">
-                    <a th:href="@{/builder-summary}" href="/builder-summary" class="btn btn-outline" style="padding: 0.75rem 3rem;">Back</a>
-                    <a th:href="@{/builder-finalize}" href="/builder-finalize" class="btn btn-primary" style="padding: 0.75rem 4rem;">Continue</a>
-                </div>
+                    <div class="full-width" style="display: flex; justify-content: space-between; margin-top: 4rem;">
+                        <a th:href="@{/builder/summary}" class="btn btn-outline" style="padding: 0.75rem 3rem;">Back</a>
+                        <button type="submit" class="btn btn-primary" style="padding: 0.75rem 4rem;">Continue</button>
+                    </div>
+                </form>
             </div>
         </main>
 

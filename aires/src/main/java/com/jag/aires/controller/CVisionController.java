@@ -3,6 +3,8 @@ package com.jag.aires.controller;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import com.jag.aires.model.PersonalInfo;
 
 @Controller
 public class CVisionController {
@@ -29,7 +31,20 @@ public class CVisionController {
     }
 
     @GetMapping("/builder-basics")
-    public String builderBasicsPage() {
+    public String builderBasicsPage(Model model, @RequestParam(value = "firstname", required = false) String firstname,
+                                  @RequestParam(value = "lastname", required = false) String lastname) {
+        PersonalInfo personalInfo = new PersonalInfo();
+        
+        if (firstname != null) {
+            personalInfo.setFirstName(firstname);
+            model.addAttribute("firstname", firstname);
+        }
+        if (lastname != null) {
+            personalInfo.setLastName(lastname);
+            model.addAttribute("lastname", lastname);
+        }
+        
+        model.addAttribute("personalInfo", personalInfo);
         return "builder-basics";
     }
 

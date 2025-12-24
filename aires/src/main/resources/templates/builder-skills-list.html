@@ -48,24 +48,35 @@
                 </div>
 
                 <div class="skills-container animate-fade">
-                    <!-- Sample Skills -->
-                    <div class="skill-chip">Java <span class="remove">×</span></div>
-                    <div class="skill-chip">Spring Boot <span class="remove">×</span></div>
-                    <div class="skill-chip">Microservices <span class="remove">×</span></div>
-                    <div class="skill-chip">REST API <span class="remove">×</span></div>
-                    <div class="skill-chip">Hibernate <span class="remove">×</span></div>
-                    <div class="skill-chip">SQL <span class="remove">×</span></div>
-                    <div class="skill-chip">Docker <span class="remove">×</span></div>
-                    <div class="skill-chip">Kubernetes <span class="remove">×</span></div>
-                    <div class="skill-chip">AWS <span class="remove">×</span></div>
-                    <div class="skill-chip">JUnit <span class="remove">×</span></div>
-                    <div class="skill-chip">Maven <span class="remove">×</span></div>
-                    <div class="skill-chip">Git <span class="remove">×</span></div>
+                    <!-- Java Technologies -->
+                    <div th:if="${skills.javaTechnologies != null}" th:each="s : ${skills.javaTechnologies}" class="skill-chip">
+                        <span th:text="${s}"></span> <span class="remove">×</span>
+                    </div>
+                    <!-- Frameworks -->
+                    <div th:if="${skills.frameworks != null}" th:each="s : ${skills.frameworks}" class="skill-chip">
+                        <span th:text="${s}"></span> <span class="remove">×</span>
+                    </div>
+                    <!-- Databases -->
+                    <div th:if="${skills.databases != null}" th:each="s : ${skills.databases}" class="skill-chip">
+                        <span th:text="${s}"></span> <span class="remove">×</span>
+                    </div>
+                    <!-- Tools -->
+                    <div th:if="${skills.tools != null}" th:each="s : ${skills.tools}" class="skill-chip">
+                        <span th:text="${s}"></span> <span class="remove">×</span>
+                    </div>
+                    <!-- Web Technologies -->
+                    <div th:if="${skills.webTechnologies != null}" th:each="s : ${skills.webTechnologies}" class="skill-chip">
+                        <span th:text="${s}"></span> <span class="remove">×</span>
+                    </div>
+                    <!-- IDE -->
+                    <div th:if="${skills.ide != null}" th:each="s : ${skills.ide}" class="skill-chip">
+                        <span th:text="${s}"></span> <span class="remove">×</span>
+                    </div>
                 </div>
 
                 <div class="full-width" style="display: flex; justify-content: space-between; margin-top: 4rem;">
-                    <a th:href="@{/builder-skills}" href="/builder-skills" class="btn btn-outline" style="padding: 0.75rem 3rem;">Back</a>
-                    <a th:href="@{/builder-summary}" href="/builder-summary" class="btn btn-primary" style="padding: 0.75rem 4rem;">Continue</a>
+                    <a th:href="@{/builder/skills}" class="btn btn-outline" style="padding: 0.75rem 3rem;">Back</a>
+                    <a th:href="@{/builder/summary}" class="btn btn-primary" style="padding: 0.75rem 4rem;">Continue</a>
                 </div>
             </div>
         </main>
