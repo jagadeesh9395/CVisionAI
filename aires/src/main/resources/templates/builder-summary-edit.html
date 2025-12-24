@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Summary - CVisionAI</title>
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+    <link rel="stylesheet" href="../static/css/main.css">
+</head>
+<body>
+    <div class="builder-layout">
+        <aside class="sidebar">
+            <div class="logo" style="font-size: 1.5rem; font-weight: 800; margin-bottom: 2rem;">CVisionAI</div>
+            <ul class="progress-list">
+                <li class="progress-item completed"><span class="progress-dot">✓</span><span>Upload</span></li>
+                <li class="progress-item completed"><span class="progress-dot">✓</span><span>Basics</span></li>
+                <li class="progress-item completed"><span class="progress-dot">✓</span><span>Experience</span></li>
+                <li class="progress-item completed"><span class="progress-dot">✓</span><span>Education</span></li>
+                <li class="progress-item completed"><span class="progress-dot">✓</span><span>Skills</span></li>
+                <li class="progress-item active"><span class="progress-dot">5</span><span>Summary</span></li>
+                <li class="progress-item"><span class="progress-dot">6</span><span>Finalize</span></li>
+            </ul>
+             <div style="margin-top: auto; padding: 1rem; background: #334155; border-radius: 0.5rem; display: flex; align-items: center; gap: 1rem;">
+                <div style="position: relative; width: 40px; height: 40px;">
+                    <svg viewBox="0 0 36 36" style="transform: rotate(-90deg);">
+                        <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#475569" stroke-width="3" />
+                        <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#10b981" stroke-width="3" stroke-dasharray="95, 100" />
+                    </svg>
+                    <span style="position: absolute; top:50%; left:50%; transform: translate(-50%, -50%); font-size: 0.7rem; font-weight: bold;">95%</span>
+                </div>
+                <div style="font-size: 0.75rem;">Resume complete</div>
+            </div>
+        </aside>
+
+        <main class="builder-main">
+            <header class="info-text">
+                <h2>Fine-tune your summary</h2>
+                <p>We've polished your summary using AI. Make any final tweaks below.</p>
+            </header>
+
+            <div style="margin-top: 2rem;">
+                <div style="position: relative; margin-bottom: 2rem;">
+                    <button class="btn btn-outline" style="position: absolute; right: 1rem; top: 1rem; font-size: 0.75rem; padding: 0.5rem 1rem;">
+                        <span style="margin-right:0.5rem;">🪄</span> AI Re-write
+                    </button>
+                    <textarea class="summary-editor" placeholder="Write your professional summary here...">Experienced Senior Software Engineer with a demonstrated history of working in the application development and cloud technologies. Skilled in Java development, particularly with Spring Boot and Microservices. Strong engineering professional with a background in building scalable enterprise applications and cloud-native solutions.</textarea>
+                </div>
+
+                <div class="full-width" style="display: flex; justify-content: space-between; margin-top: 4rem;">
+                    <a th:href="@{/builder-summary}" href="/builder-summary" class="btn btn-outline" style="padding: 0.75rem 3rem;">Back</a>
+                    <a th:href="@{/builder-finalize}" href="/builder-finalize" class="btn btn-primary" style="padding: 0.75rem 4rem;">Continue</a>
+                </div>
+            </div>
+        </main>
+
+        <aside class="builder-preview">
+            <div class="alert-box animate-fade">
+                <div class="alert-header">
+                    <span>Summary Score</span>
+                    <span class="badge-red" style="background: #eff6ff; color: var(--primary);">92</span>
+                </div>
+                <p style="font-size: 0.75rem; color: var(--text-muted);">Your summary is punchy and highlights your core value proposition effectively!</p>
+            </div>
+
+            <div class="resume-card">
+                 <div style="border-bottom: 2px solid #334155; padding-bottom: 0.5rem; margin-bottom: 0.5rem;">
+                        <h4 style="font-size: 0.8rem;">JAGADEESHWAR KARANAM</h4>
+                </div>
+                <div style="font-size: 0.4rem; color: #475569;">
+                    <h5 style="font-size: 0.5rem; margin-bottom: 0.25rem;">PROFESSIONAL SUMMARY</h5>
+                    <div style="border-left: 2px solid var(--primary); padding-left: 0.5rem; margin-bottom: 1rem;">
+                        <p>Experienced Senior Software Engineer with a demonstrated history of working in the application development and cloud technologies. Skilled in Java development, particularly with Spring Boot and Microservices. Strong engineering professional with a background in building scalable enterprise applications and cloud-native solutions.</p>
+                    </div>
+                </div>
+            </div>
+        </aside>
+    </div>
+</body>
+</html>

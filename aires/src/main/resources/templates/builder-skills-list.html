@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Skills - CVisionAI</title>
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+    <link rel="stylesheet" href="../static/css/main.css">
+</head>
+<body>
+    <div class="builder-layout">
+        <aside class="sidebar">
+            <div class="logo" style="font-size: 1.5rem; font-weight: 800; margin-bottom: 2rem;">CVisionAI</div>
+            <ul class="progress-list">
+                <li class="progress-item completed"><span class="progress-dot">✓</span><span>Upload</span></li>
+                <li class="progress-item completed"><span class="progress-dot">✓</span><span>Basics</span></li>
+                <li class="progress-item completed"><span class="progress-dot">✓</span><span>Experience</span></li>
+                <li class="progress-item completed"><span class="progress-dot">✓</span><span>Education</span></li>
+                <li class="progress-item active"><span class="progress-dot">4</span><span>Skills</span></li>
+                <li class="progress-item"><span class="progress-dot">5</span><span>Summary</span></li>
+                <li class="progress-item"><span class="progress-dot">6</span><span>Finalize</span></li>
+            </ul>
+             <div style="margin-top: auto; padding: 1rem; background: #334155; border-radius: 0.5rem; display: flex; align-items: center; gap: 1rem;">
+                <div style="position: relative; width: 40px; height: 40px;">
+                    <svg viewBox="0 0 36 36" style="transform: rotate(-90deg);">
+                        <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#475569" stroke-width="3" />
+                        <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#10b981" stroke-width="3" stroke-dasharray="90, 100" />
+                    </svg>
+                    <span style="position: absolute; top:50%; left:50%; transform: translate(-50%, -50%); font-size: 0.7rem; font-weight: bold;">90%</span>
+                </div>
+                <div style="font-size: 0.75rem;">Resume complete</div>
+            </div>
+        </aside>
+
+        <main class="builder-main">
+            <header class="info-text">
+                <h2>Skills that make you stand out</h2>
+                <p>We've highlighted key technical skills from your profile. Add more or remove as needed.</p>
+            </header>
+
+            <div style="margin-top: 2rem;">
+                <div class="form-group" style="max-width: 500px; margin-bottom: 2rem;">
+                    <label>Add a skill (e.g., Spring Boot, React)</label>
+                    <div style="display: flex; gap: 0.5rem;">
+                        <input type="text" placeholder="Start typing a skill..." style="flex: 1;">
+                        <button class="btn btn-primary" style="padding: 0.75rem 1.5rem;">Add</button>
+                    </div>
+                </div>
+
+                <div class="skills-container animate-fade">
+                    <!-- Sample Skills -->
+                    <div class="skill-chip">Java <span class="remove">×</span></div>
+                    <div class="skill-chip">Spring Boot <span class="remove">×</span></div>
+                    <div class="skill-chip">Microservices <span class="remove">×</span></div>
+                    <div class="skill-chip">REST API <span class="remove">×</span></div>
+                    <div class="skill-chip">Hibernate <span class="remove">×</span></div>
+                    <div class="skill-chip">SQL <span class="remove">×</span></div>
+                    <div class="skill-chip">Docker <span class="remove">×</span></div>
+                    <div class="skill-chip">Kubernetes <span class="remove">×</span></div>
+                    <div class="skill-chip">AWS <span class="remove">×</span></div>
+                    <div class="skill-chip">JUnit <span class="remove">×</span></div>
+                    <div class="skill-chip">Maven <span class="remove">×</span></div>
+                    <div class="skill-chip">Git <span class="remove">×</span></div>
+                </div>
+
+                <div class="full-width" style="display: flex; justify-content: space-between; margin-top: 4rem;">
+                    <a th:href="@{/builder-skills}" href="/builder-skills" class="btn btn-outline" style="padding: 0.75rem 3rem;">Back</a>
+                    <a th:href="@{/builder-summary}" href="/builder-summary" class="btn btn-primary" style="padding: 0.75rem 4rem;">Continue</a>
+                </div>
+            </div>
+        </main>
+
+        <aside class="builder-preview">
+            <div class="alert-box animate-fade">
+                <div class="alert-header">
+                    <span>Skill Match</span>
+                    <span class="badge-red" style="background: #dcfce7; color: #15803d;">✓</span>
+                </div>
+                <p style="font-size: 0.75rem; color: var(--text-muted);">You have all the top skills required for a Senior Software Engineer role. Keep it up!</p>
+            </div>
+
+            <div class="resume-card">
+                 <div style="border-bottom: 2px solid #334155; padding-bottom: 0.5rem; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
+                    <div style="width: 30px; height: 30px; background: #e2e8f0; border-radius: 50%;"></div>
+                    <div>
+                        <h4 style="font-size: 0.8rem;">JAGADEESHWAR KARANAM</h4>
+                    </div>
+                </div>
+                <div style="font-size: 0.4rem; color: #475569;">
+                    <div style="height: 100px; background: #f8fafc; border-radius: 4px; margin-bottom: 0.5rem;"></div>
+                    <h5 style="font-size: 0.5rem; margin-bottom: 0.25rem;">SKILLS</h5>
+                    <div style="display: flex; flex-wrap: wrap; gap: 4px;">
+                        <span style="background: #e2e8f0; padding: 2px 4px; border-radius: 2px;">Java</span>
+                        <span style="background: #e2e8f0; padding: 2px 4px; border-radius: 2px;">Spring Boot</span>
+                        <span style="background: #e2e8f0; padding: 2px 4px; border-radius: 2px;">Microservices</span>
+                    </div>
+                </div>
+            </div>
+        </aside>
+    </div>
+</body>
+</html>

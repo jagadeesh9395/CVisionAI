@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CVisionAI - Upload Your Resume</title>
+    <link rel="stylesheet" th:href="@{/css/main.css}" />
+    <link rel="stylesheet" href="../static/css/main.css" />
+    <!-- Fallback for local preview -->
+  </head>
+  <body>
+    <div class="app-container">
+      <main class="main-content animate-fade">
+        <div class="upload-section">
+          <header class="page-header">
+            <h1>Upload your resume</h1>
+          </header>
+
+          <div class="upload-grid">
+            <div class="drop-zone" id="dropZone">
+              <div class="upload-icon">
+                <svg
+                  width="48"
+                  height="48"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                  <polyline points="17 8 12 3 7 8"></polyline>
+                  <line x1="12" y1="3" x2="12" y2="15"></line>
+                </svg>
+              </div>
+              <p>Drag & drop your file here</p>
+              <button
+                class="btn btn-outline"
+                style="margin-top: 1rem; background-color: #fde68a"
+              >
+                <svg
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  style="margin-right: 8px"
+                >
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                  <polyline points="17 8 12 3 7 8"></polyline>
+                  <line x1="12" y1="3" x2="12" y2="15"></line>
+                </svg>
+                Browse your computer
+              </button>
+              <p style="font-size: 0.75rem; color: #94a3b8; margin-top: 1rem">
+                Acceptable file types: DOC, DOCX, PDF, HTML, RTF, TXT
+              </p>
+            </div>
+
+            <div class="or-divider">OR</div>
+
+            <div class="cloud-options">
+              <button class="btn btn-outline">
+                <img
+                  src="https://upload.wikimedia.org/wikipedia/commons/7/78/Dropbox_Icon.svg"
+                  width="20"
+                  alt="Dropbox"
+                />
+                Dropbox
+              </button>
+              <button class="btn btn-outline">
+                <img
+                  src="https://upload.wikimedia.org/wikipedia/commons/1/12/Google_Drive_icon_%282020%29.svg"
+                  width="20"
+                  alt="Google Drive"
+                />
+                Google Drive
+              </button>
+            </div>
+          </div>
+
+          <div class="footer-actions">
+            <a
+              href="#"
+              class="btn btn-ghost"
+              style="color: var(--primary); font-weight: 600"
+              >Create a new resume</a
+            >
+            <button
+              class="btn btn-primary"
+              style="
+                background-color: #e2e8f0;
+                color: #94a3b8;
+                cursor: not-allowed;
+              "
+            >
+              Upload
+            </button>
+          </div>
+
+          <footer
+            style="
+              margin-top: 4rem;
+              font-size: 0.75rem;
+              color: #64748b;
+              text-align: center;
+            "
+          >
+            By clicking any of the actions listed here, you agree to our
+            <a href="#">Terms of Use</a> and <a href="#">Privacy Policy</a>.
+          </footer>
+        </div>
+      </main>
+    </div>
+
+    <script>
+      const dropZone = document.getElementById("dropZone");
+      dropZone.addEventListener("dragover", (e) => {
+        e.preventDefault();
+        dropZone.style.borderColor = "var(--primary)";
+        dropZone.style.backgroundColor = "#f0f7ff";
+      });
+      dropZone.addEventListener("dragleave", () => {
+        dropZone.style.borderColor = "var(--border)";
+        dropZone.style.backgroundColor = "var(--white)";
+      });
+      dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            // Handle file drop redirect to success page for demo
+            window.location.href = '/greet';
+        });
+    </script>
+  </body>
+</html>

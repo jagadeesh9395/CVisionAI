@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nice to meet you - CVisionAI</title>
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+    <link rel="stylesheet" href="../static/css/main.css">
+</head>
+<body>
+    <div class="app-container">
+        <main class="main-content animate-fade">
+            <div class="hero-content">
+                <div class="illustration">
+                    <img src="../static/images/welcome.png" th:src="@{/images/welcome.png}" alt="Welcome">
+                    <!-- Placeholder if image not found -->
+                    <div th:if="${false}">
+                         <svg width="400" height="400" viewBox="0 0 400 400" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="200" cy="200" r="150" fill="#fef3c7" />
+                            <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-size="20">Hello!</text>
+                         </svg>
+                    </div>
+                </div>
+                <div class="info-text">
+                    <h2>Nice to meet you, <span th:text="${userName}">Jagadeeshwar</span></h2>
+                    <p>You are currently a <b>Senior Software Engineer</b> at <b>Monocept Pvt Ltd</b>.</p>
+                    <p>Your extensive experience in <b>Java development</b>, particularly with <b>Spring Boot</b> and <b>Microservices</b>, is noteworthy.</p>
+                    <p>We will tailor your resume-building experience to emphasize your strong background in <b>application development and cloud technologies</b>.</p>
+                    
+                    <a th:href="@{/analysis}" href="/analysis" class="btn btn-primary" style="margin-top: 2rem; padding: 1rem 3rem; font-size: 1.1rem;">Continue</a>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+</html>

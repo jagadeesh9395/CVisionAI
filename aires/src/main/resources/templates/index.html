@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CVisionAI - The Smarter AI Resume Builder</title>
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+    <link rel="stylesheet" href="../static/css/main.css">
+    <style>
+        /* Embedded analyzer styles for demo integration */
+        .analyzer-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        .analyzer-card {
+            background: #f8fafc;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            border: 1px solid var(--border);
+        }
+        .code-area {
+            background: #1e293b;
+            color: #e2e8f0;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            font-family: monospace;
+            font-size: 0.8rem;
+            width: 100%;
+            height: 200px;
+            border: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Navigation -->
+        <nav style="padding: 1.5rem 4rem; display: flex; justify-content: space-between; align-items: center; position: fixed; top: 0; left: 0; right: 0; z-index: 100;" class="glass-card">
+            <div class="logo" style="font-size: 1.5rem; font-weight: 800;">CVisionAI</div>
+            <div style="display: flex; gap: 2rem; align-items: center;">
+                <a href="#demo" style="text-decoration: none; color: var(--text-dark); font-weight: 500;">AI Demo</a>
+                <a th:href="@{/builder-basics}" href="/builder-basics" class="btn btn-outline">Sign In</a>
+                <a th:href="@{/upload}" href="/upload" class="btn btn-primary">Get Started</a>
+            </div>
+        </nav>
+
+        <section class="hero-wrapper animate-fade">
+            <span class="hero-tag">Powered by Spring AI & Ollama</span>
+            <h1>Build your dream career<br>with <span style="color: var(--primary);">AI Precision.</span></h1>
+            <p>The first resume builder that actually understands your experience. We use advanced LLMs to extract, analyze, and polish your professional identity.</p>
+            
+            <div class="landing-cards">
+                <a th:href="@{/upload}" href="/upload" style="text-decoration: none; color: inherit;">
+                    <div class="action-card">
+                        <div class="icon">📄</div>
+                        <h3>Upload existing resume</h3>
+                        <p>Have an old resume? Upload it and let our AI extract and update it to a modern, ATS-friendly version in seconds.</p>
+                        <span class="btn btn-primary" style="width: 100%;">Upload & Scan</span>
+                    </div>
+                </a>
+
+                <a th:href="@{/builder-basics}" href="/builder-basics" style="text-decoration: none; color: inherit;">
+                    <div class="action-card">
+                        <div class="icon">✨</div>
+                        <h3>Create from scratch</h3>
+                        <p>Starting fresh? Answer a few simple questions and our AI will suggest high-impact bullet points and optimized formatting for you.</p>
+                        <span class="btn btn-outline" style="width: 100%;">Build New Resume</span>
+                    </div>
+                </a>
+            </div>
+        </section>
+
+        <!-- Demo Section (Integrated from text-analyzer.html) -->
+        <section class="demo-section" id="demo">
+            <div class="demo-container">
+                <div style="text-align: center; margin-bottom: 3rem;">
+                    <h2 style="font-size: 2.5rem; font-weight: 800; margin-bottom: 1rem;">Experience the AI Intelligence</h2>
+                    <p style="color: var(--text-muted);">See how our AI Engine extracts structured data from raw text. This is what powers CVisionAI under the hood.</p>
+                </div>
+
+                <div class="analyzer-grid">
+                    <div>
+                        <div class="analyzer-card">
+                            <h4 style="margin-bottom: 1rem;">Input Professional Text</h4>
+                            <textarea id="inputText" class="summary-editor" style="min-height: 150px; font-size: 0.9rem;" placeholder="Paste a job description or your bio here...">Senior Software Engineer with 5 years of experience in Java and Spring Boot. I led a team of 4 to migrate legacy systems to AWS, improving uptime by 99.9%.</textarea>
+                        </div>
+                        <div class="analyzer-card" style="margin-top: 1rem;">
+                            <h4 style="margin-bottom: 1rem;">Target Data Schema</h4>
+                            <textarea id="jsonSchema" class="code-area">
+{
+  "skills": ["string"],
+  "achievements": ["string"],
+  "years_experience": "number",
+  "technologies": ["string"]
+}</textarea>
+                        </div>
+                    </div>
+                    
+                    <div class="analyzer-card" style="display: flex; flex-direction: column;">
+                        <h4 style="margin-bottom: 1rem; display: flex; justify-content: space-between;">
+                            AI Live Extraction 
+                            <span id="demoStatus" style="font-size: 0.7rem; color: #10b981;">● READY</span>
+                        </h4>
+                        <div id="resultsContainer" style="flex: 1; background: #f1f5f9; border-radius: 0.5rem; padding: 1.5rem; overflow-y: auto; font-family: monospace; font-size: 0.85rem;">
+                            <div class="text-muted">Extract results will appear here...</div>
+                        </div>
+                        <button id="analyzeBtn" class="btn btn-primary" style="margin-top: 1rem; padding: 1rem;">
+                            Run AI Engine
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <footer style="padding: 4rem; text-align: center; background: white; border-top: 1px solid var(--border);">
+            <div class="logo" style="margin-bottom: 1rem; opacity: 0.5;">CVisionAI</div>
+            <p style="font-size: 0.875rem; color: var(--text-muted);">© 2025 CVisionAI. Built with Spring Boot 3 & Ollama.</p>
+        </footer>
+    </div>
+
+    <!-- Scripts for Demo -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+        // Simple integration of text-analyzer logic for the landing page demo
+        document.getElementById('analyzeBtn').addEventListener('click', async () => {
+            const btn = document.getElementById('analyzeBtn');
+            const results = document.getElementById('resultsContainer');
+            const status = document.getElementById('demoStatus');
+            
+            btn.disabled = true;
+            btn.innerText = 'Analyzing with AI...';
+            results.innerHTML = '<div style="display: flex; align-items:center; gap: 0.5rem;"><div class="spinner" style="width: 14px; height: 14px; border: 2px solid #ccc; border-top-color: #2563eb; border-radius: 50%; animation: spin 0.8s linear infinite;"></div>Thinking...</div>';
+            status.innerHTML = '● ANALYZING';
+            status.style.color = '#f59e0b';
+
+            try {
+                const response = await axios.post('/api/analyze', {
+                    text: document.getElementById('inputText').value,
+                    schema: document.getElementById('jsonSchema').value
+                });
+                
+                results.innerHTML = '<pre style="color: #0f172a;">' + JSON.stringify(response.data, null, 2) + '</pre>';
+                status.innerHTML = '● COMPLETE';
+                status.style.color = '#10b981';
+            } catch (error) {
+                results.innerHTML = '<span style="color: #ef4444;">Error connecting to AI service. Ensure Ollama is running.</span>';
+                status.innerHTML = '● FAILED';
+                status.style.color = '#ef4444';
+            } finally {
+                btn.disabled = false;
+                btn.innerText = 'Run AI Engine';
+            }
+        });
+    </script>
+    <style>
+        @keyframes spin { to { transform: rotate(360deg); } }
+    </style>
+</body>
+</html>

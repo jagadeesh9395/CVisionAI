@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Experience Overview - CVisionAI</title>
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+    <link rel="stylesheet" href="../static/css/main.css">
+</head>
+<body>
+    <div class="builder-layout">
+        <aside class="sidebar">
+            <div class="logo" style="font-size: 1.5rem; font-weight: 800; margin-bottom: 2rem;">CVisionAI</div>
+            <ul class="progress-list">
+                <li class="progress-item completed">
+                    <span class="progress-dot">✓</span>
+                    <span>Upload</span>
+                </li>
+                <li class="progress-item completed">
+                    <span class="progress-dot">✓</span>
+                    <span>Basics</span>
+                </li>
+                <li class="progress-item active">
+                    <span class="progress-dot">2</span>
+                    <span>Experience</span>
+                </li>
+                <li class="progress-item">
+                    <span class="progress-dot">3</span>
+                    <span>Education</span>
+                </li>
+                <li class="progress-item">
+                    <span class="progress-dot">4</span>
+                    <span>Skills</span>
+                </li>
+                <li class="progress-item">
+                    <span class="progress-dot">5</span>
+                    <span>Summary</span>
+                </li>
+                <li class="progress-item">
+                    <span class="progress-dot">6</span>
+                    <span>Finalize</span>
+                </li>
+            </ul>
+             <div style="margin-top: auto; padding: 1rem; background: #334155; border-radius: 0.5rem; display: flex; align-items: center; gap: 1rem;">
+                <div style="position: relative; width: 40px; height: 40px;">
+                    <svg viewBox="0 0 36 36" style="transform: rotate(-90deg);">
+                        <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#475569" stroke-width="3" />
+                        <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#10b981" stroke-width="3" stroke-dasharray="88, 100" />
+                    </svg>
+                    <span style="position: absolute; top:50%; left:50%; transform: translate(-50%, -50%); font-size: 0.7rem; font-weight: bold;">88%</span>
+                </div>
+                <div style="font-size: 0.75rem;">Resume complete</div>
+            </div>
+        </aside>
+
+        <main class="builder-main">
+            <header class="info-text">
+                <h2>Here's an overview of your experience</h2>
+                <p>Make edits as needed.</p>
+            </header>
+
+            <div style="margin-top: 2rem;">
+                <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 2rem;">
+                    <span style="background: #fef3c7; color: var(--text-dark); padding: 0.25rem 0.75rem; border-radius: 4px; font-weight: 700; font-size: 0.8rem;">Work Experience</span>
+                    <button style="border: none; background: #e2e8f0; color: #64748b; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer;">×</button>
+                </div>
+
+                <!-- Experience Card 1 -->
+                <article class="experience-card animate-fade">
+                    <div class="exp-body">
+                        <div class="exp-details">
+                            <a href="#" class="exp-action-btn" style="color: var(--primary); margin-bottom: 0.5rem;">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                                Edit
+                            </a>
+                            <h4>Senior Software Engineer, Monocept Pvt Ltd</h4>
+                            <p class="meta">Hyderabad</p>
+                            <p class="meta">Jun 2023 - Oct 2023</p>
+                        </div>
+                        <div class="exp-description-placeholder">
+                            <span>+ Add Description</span>
+                        </div>
+                    </div>
+                    <div class="exp-footer">
+                        <div class="suggestion-pill">
+                            <span style="width: 8px; height: 8px; background: #ef4444; border-radius: 50%;"></span>
+                            See suggestions
+                        </div>
+                        <div class="exp-actions">
+                            <a href="#" class="exp-action-btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg> Edit</a>
+                            <a href="#" class="exp-action-btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg> Delete</a>
+                            <a href="#" class="exp-action-btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="5 9 2 12 5 15"></polyline><polyline points="9 5 12 2 15 5"></polyline><polyline points="15 19 12 22 9 19"></polyline><polyline points="19 9 22 12 19 15"></polyline><line x1="2" y1="12" x2="22" y2="12"></line><line x1="12" y1="2" x2="12" y2="22"></line></svg> Move</a>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Experience Card 2 -->
+                <article class="experience-card animate-fade" style="animation-delay: 0.1s;">
+                    <div class="exp-body">
+                        <div class="exp-details">
+                            <a href="#" class="exp-action-btn" style="color: var(--primary); margin-bottom: 0.5rem;">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                                Edit
+                            </a>
+                            <h4>Senior Software Engineer, Charter Global Technologies Pvt Ltd</h4>
+                            <p class="meta">Hyderabad</p>
+                            <p class="meta">Jun 2020 - Apr 2023</p>
+                        </div>
+                        <div class="exp-description-placeholder">
+                            <span>+ Add Description</span>
+                        </div>
+                    </div>
+                    <div class="exp-footer">
+                        <div class="suggestion-pill">
+                            <span style="width: 8px; height: 8px; background: #ef4444; border-radius: 50%;"></span>
+                            See suggestions
+                        </div>
+                        <div class="exp-actions">
+                            <a href="#" class="exp-action-btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg> Edit</a>
+                            <a href="#" class="exp-action-btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg> Delete</a>
+                            <a href="#" class="exp-action-btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="5 9 2 12 5 15"></polyline><polyline points="9 5 12 2 15 5"></polyline><polyline points="15 19 12 22 9 19"></polyline><polyline points="19 9 22 12 19 15"></polyline><line x1="2" y1="12" x2="22" y2="12"></line><line x1="12" y1="2" x2="12" y2="22"></line></svg> Move</a>
+                        </div>
+                    </div>
+                </article>
+
+                <div class="full-width" style="display: flex; justify-content: space-between; margin-top: 4rem;">
+                    <a th:href="@{/builder-experience}" href="/builder-experience" class="btn btn-outline" style="padding: 0.75rem 3rem;">Back</a>
+                    <a th:href="@{/builder-education}" href="/builder-education" class="btn btn-primary" style="padding: 0.75rem 4rem;">Continue</a>
+                </div>
+            </div>
+        </main>
+
+        <aside class="builder-preview">
+            <!-- Best Practice Alert -->
+            <div class="alert-box animate-fade">
+                <div class="alert-header">
+                    <span>Best practice</span>
+                    <span class="badge-red">!</span>
+                </div>
+                <div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 1rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem; background: #f8fafc; padding: 0.5rem; border-radius: 4px;">
+                    <span style="color: #64748b;">Work Experience</span>
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                    <span style="font-weight: 700; color: var(--text-dark);">Experience</span>
+                </div>
+                <div style="display: flex; gap: 0.5rem;">
+                    <button class="btn btn-primary" style="padding: 0.4rem 1rem; font-size: 0.7rem; background: #fbbf24; color: var(--text-dark);">Use</button>
+                    <button class="btn btn-ghost" style="padding: 0.4rem 1rem; font-size: 0.7rem; color: var(--primary);">Ignore</button>
+                </div>
+            </div>
+
+            <div class="resume-card">
+                 <div style="border-bottom: 2px solid #334155; padding-bottom: 0.5rem; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
+                    <div style="width: 30px; height: 30px; background: #e2e8f0; border-radius: 50%;"></div>
+                    <div>
+                        <h4 style="font-size: 0.8rem;">JAGADEESHWAR KARANAM</h4>
+                        <div style="display: flex; gap: 0.5rem; opacity: 0.6; font-size: 0.4rem;">
+                            <span>Hyderabad, India</span>
+                            <span>8555978381</span>
+                        </div>
+                    </div>
+                </div>
+                <div style="font-size: 0.4rem; color: #475569;">
+                    <p style="margin-bottom: 0.5rem;">Experienced Senior Software Engineer with a demonstrated history of working in the application development and cloud technologies...</p>
+                    <div style="height: 100px; background: #f8fafc; border-radius: 4px; margin-bottom: 0.5rem;"></div>
+                    <div style="height: 50px; background: #f1f5f9; border-radius: 4px;"></div>
+                </div>
+                <div style="position: absolute; right: 1rem; bottom: 1rem; background: #fbbf24; border-radius: 50%; padding: 0.5rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1); cursor: pointer;">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line><line x1="11" y1="8" x2="11" y2="14"></line><line x1="8" y1="11" x2="14" y2="11"></line></svg>
+                </div>
+            </div>
+            <div class="preview-actions">
+                <a href="#" style="font-size: 0.875rem; color: var(--primary); font-weight: 600; text-decoration: none;">Change template</a>
+            </div>
+        </aside>
+    </div>
+</body>
+</html>
