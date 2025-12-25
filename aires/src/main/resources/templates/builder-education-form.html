@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:form="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${education.id} ? 'Edit Education - CVisionAI' : 'Add Education - CVisionAI'">Add Education - CVisionAI</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+    <link rel="stylesheet" href="../static/css/main.css">
+    <style>
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: #1e293b;
+            font-size: 0.875rem;
+        }
+        .form-control {
+            width: 100%;
+            padding: 0.625rem 0.875rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.5rem;
+            font-size: 0.9375rem;
+            transition: all 0.2s;
+            background-color: #fff;
+        }
+        .form-control:focus {
+            border-color: #4f46e5;
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+            outline: none;
+        }
+        .has-error .form-control {
+            border-color: #ef4444;
+        }
+        .text-danger {
+            color: #ef4444;
+            font-size: 0.75rem;
+            margin-top: 0.25rem;
+            display: block;
+        }
+        .btn {
+            padding: 0.625rem 1.25rem;
+            border-radius: 0.5rem;
+            font-weight: 500;
+            font-size: 0.9375rem;
+            transition: all 0.2s;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        .btn-primary {
+            background-color: #4f46e5;
+            color: white;
+            border: none;
+        }
+        .btn-primary:hover {
+            background-color: #4338ca;
+        }
+        .btn-outline {
+            background-color: transparent;
+            border: 1px solid #e2e8f0;
+            color: #475569;
+        }
+        .btn-outline:hover {
+            background-color: #f8fafc;
+            border-color: #cbd5e1;
+        }
+        .btn-danger {
+            background-color: #ef4444;
+            color: white;
+            border: none;
+        }
+        .btn-danger:hover {
+            background-color: #dc2626;
+        }
+        .form-check-input:checked {
+            background-color: #4f46e5;
+            border-color: #4f46e5;
+        }
+        .form-check-input:focus {
+            box-shadow: 0 0 0 0.25rem rgba(79, 70, 229, 0.25);
+            border-color: #4f46e5;
+        }
+        .achievement-item {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+            align-items: center;
+        }
+        .achievement-item input {
+            flex-grow: 1;
+        }
+        .add-achievement {
+            color: #4f46e5;
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            margin-top: 0.5rem;
+        }
+        .add-achievement:hover {
+            text-decoration: underline;
+        }
+        .remove-achievement {
+            color: #ef4444;
+            cursor: pointer;
+            padding: 0.25rem;
+            border-radius: 0.25rem;
+        }
+        .remove-achievement:hover {
+            background-color: #fef2f2;
+        }
+    </style>
+</head>
+<body>
+<div class="builder-layout">
+    <aside class="sidebar">
+        <div class="logo" style="font-size: 1.5rem; font-weight: 800; margin-bottom: 2rem;">CVisionAI</div>
+        <ul class="progress-list">
+            <li class="progress-item completed">
+                <span class="progress-dot">✓</span>
+                <span>Upload</span>
+            </li>
+            <li class="progress-item completed">
+                <span class="progress-dot">✓</span>
+                <span>Basics</span>
+            </li>
+            <li class="progress-item">
+                <span class="progress-dot">3</span>
+                <span>Experience</span>
+            </li>
+            <li class="progress-item active">
+                <span class="progress-dot">4</span>
+                <span>Education</span>
+            </li>
+            <li class="progress-item">
+                <span class="progress-dot">5</span>
+                <span>Skills</span>
+            </li>
+            <li class="progress-item">
+                <span class="progress-dot">6</span>
+                <span>Summary</span>
+            </li>
+            <li class="progress-item">
+                <span class="progress-dot">7</span>
+                <span>Finalize</span>
+            </li>
+        </ul>
+        <div style="margin-top: auto; padding: 1rem; background: #334155; border-radius: 0.5rem; display: flex; align-items: center; gap: 1rem;">
+            <div style="position: relative; width: 40px; height: 40px;">
+                <svg viewBox="0 0 36 36" style="transform: rotate(-90deg);">
+                    <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#475569" stroke-width="3"/>
+                    <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#10b981" stroke-width="3"
+                          stroke-dasharray="88, 100"/>
+                </svg>
+                <span style="position: absolute; top:50%; left:50%; transform: translate(-50%, -50%); font-size: 0.7rem; font-weight: bold;">88%</span>
+            </div>
+            <div style="font-size: 0.75rem;">Resume complete</div>
+        </div>
+    </aside>
+
+    <main class="builder-main">
+        <div class="d-flex justify-content-between align-items-center mb-5">
+            <div>
+                <h1 class="mb-1" th:text="${education.id} ? 'Edit Education' : 'Add Education'">Add Education</h1>
+                <p class="text-muted">Add your academic background and achievements</p>
+            </div>
+        </div>
+
+        <form th:action="${education.id} ? @{/builder/education/save} : @{/builder/education/save}"
+              th:object="${education}" method="post" class="needs-validation" novalidate>
+
+            <input type="hidden" th:field="*{id}"/>
+            <input type="hidden" th:field="*{resumeId}"/>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group" th:classappend="${#fields.hasErrors('degree')} ? 'has-error' : ''">
+                        <label for="degree">Degree <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="degree" th:field="*{degree}" required/>
+                        <div class="text-danger" th:if="${#fields.hasErrors('degree')}" th:errors="*{degree}"></div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group" th:classappend="${#fields.hasErrors('institution')} ? 'has-error' : ''">
+                        <label for="institution">Institution <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="institution" th:field="*{institution}" required/>
+                        <div class="text-danger" th:if="${#fields.hasErrors('institution')}" th:errors="*{institution}"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="fieldOfStudy">Field of Study</label>
+                        <input type="text" class="form-control" id="fieldOfStudy" th:field="*{fieldOfStudy}"/>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="location">Location</label>
+                        <input type="text" class="form-control" id="location" th:field="*{location}" placeholder="City, Country"/>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="startDate">Start Date <span class="text-danger">*</span></label>
+                        <input type="month" class="form-control" id="startDate" th:field="*{startDate}" required/>
+                        <div class="text-danger" th:if="${#fields.hasErrors('startDate')}" th:errors="*{startDate}"></div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="endDate">End Date <span class="text-muted" th:unless="${education.isCurrent}">(or expected)</span></label>
+                        <input type="month" class="form-control" id="endDate" th:field="*{endDate}"
+                               th:disabled="${education.isCurrent}"/>
+                        <div class="form-group">
+                            <label for="isCurrent">Currently Studying Here</label>
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" id="isCurrent"
+                                       th:field="*{isCurrent}" th:checked="*{isCurrent}">
+                                <label class="form-check-label" for="isCurrent">I am currently studying here</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="grade">Grade/GPA</label>
+                        <input type="text" class="form-control" id="grade" th:field="*{grade}"
+                               placeholder="e.g., 3.8/4.0, First Class, etc."/>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Achievements & Activities</label>
+                <div id="achievements-container">
+                    <div class="achievement-item" th:each="achievement, stat : *{achievements}">
+                        <input type="text" class="form-control form-control-sm"
+                               th:field="*{achievements[__${stat.index}__]}"/>
+                        <button type="button" class="btn btn-sm btn-outline-danger remove-achievement"
+                                onclick="removeAchievement(this)">
+                            <i class="bi bi-x-lg"></i>
+                        </button>
+                    </div>
+                </div>
+                <button type="button" class="btn btn-sm btn-outline-primary mt-2" onclick="addAchievement()">
+                    <i class="bi bi-plus-lg"></i> Add Achievement
+                </button>
+            </div>
+
+            <div class="d-flex justify-content-between mt-5">
+                <a th:href="@{/builder/education-list}" class="btn btn-outline">
+                    <i class="bi bi-arrow-left me-2"></i> Cancel
+                </a>
+                <div>
+                    <button type="submit" name="action" value="save" class="btn btn-primary me-2">
+                        <i class="bi bi-save me-2"></i>Save
+                    </button>
+                    <button type="submit" name="action" value="saveAndAdd" class="btn btn-outline-primary">
+                        <i class="bi bi-plus-circle me-2"></i>Save & Add Another
+                    </button>
+                </div>
+            </div>
+        </form>
+    </main>
+
+    <aside class="builder-preview">
+        <div class="alert-box animate-fade">
+            <div class="alert-header">
+                <span>Pro Tip</span>
+                <span class="badge-red" style="background: #dcfce7; color: #15803d;">i</span>
+            </div>
+            <p style="font-size: 0.75rem; color: var(--text-muted);">
+                Include relevant coursework, projects, or honors to make your education stand out.
+            </p>
+        </div>
+
+        <div class="ai-suggestions mt-4">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <h6>AI Suggestions</h6>
+                <button class="btn btn-sm btn-outline-primary" onclick="getAISuggestions()">
+                    <i class="bi bi-arrow-clockwise"></i> Refresh
+                </button>
+            </div>
+            <div id="suggestions-list" class="suggestions-list">
+                <div class="suggestion-item">
+                    <div class="suggestion-text">Click 'Refresh' to get AI-powered suggestions for your education section.</div>
+                </div>
+            </div>
+        </div>
+    </aside>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header border-0 pb-0">
+                <h5 class="modal-title fw-bold" id="deleteModalLabel">Delete Education</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body py-4">
+                <div class="d-flex align-items-center mb-3">
+                    <div class="rounded-circle bg-danger bg-opacity-10 p-3 me-3">
+                        <i class="bi bi-exclamation-triangle-fill text-danger fs-4"></i>
+                    </div>
+                    <div>
+                        <h6 class="mb-1">Are you sure?</h6>
+                        <p class="text-muted mb-0">This action cannot be undone. This will permanently delete <span id="educationToDelete" class="fw-semibold"></span> from your
+                            education history.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer border-0 pt-0">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                <form id="deleteEducationForm" method="post" class="d-inline">
+                    <input type="hidden" name="_method" value="delete"/>
+                    <button type="submit" class="btn btn-danger">
+                        <i class="bi bi-trash me-1"></i> Delete
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Handle delete confirmation modal
+        const deleteModal = document.getElementById('deleteModal');
+        if (deleteModal) {
+            deleteModal.addEventListener('show.bs.modal', function(event) {
+                const button = event.relatedTarget;
+                const educationId = button.getAttribute('data-education-id');
+                const educationName = button.getAttribute('data-education-name');
+
+                const modalTitle = deleteModal.querySelector('.modal-title');
+                const educationToDelete = deleteModal.querySelector('#educationToDelete');
+                const deleteForm = deleteModal.querySelector('#deleteEducationForm');
+
+                educationToDelete.textContent = educationName || 'this education entry';
+                deleteForm.action = `/builder/education/delete/${educationId}`;
+            });
+        }
+    });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    // Form validation
+    (function () {
+        'use strict'
+        var forms = document.querySelectorAll('.needs-validation')
+        Array.prototype.slice.call(forms).forEach(function (form) {
+            form.addEventListener('submit', function (event) {
+                if (!form.checkValidity()) {
+                    event.preventDefault()
+                    event.stopPropagation()
+                }
+                form.classList.add('was-validated')
+            }, false)
+        })
+    })()
+
+    // Toggle end date based on current study status
+    document.getElementById('isCurrent').addEventListener('change', function() {
+        const endDateField = document.getElementById('endDate');
+        endDateField.disabled = this.checked;
+        if (this.checked) {
+            endDateField.value = '';
+        }
+    });
+
+    // Add achievement field
+    function addAchievement() {
+        const container = document.getElementById('achievements-container');
+        const index = container.children.length;
+        const div = document.createElement('div');
+        div.className = 'achievement-item';
+        div.innerHTML = `
+            <input type="text" class="form-control form-control-sm" 
+                   name="achievements[${index}]" />
+            <button type="button" class="btn btn-sm btn-outline-danger remove-achievement" 
+                    onclick="removeAchievement(this)">
+                <i class="bi bi-x-lg"></i>
+            </button>
+        `;
+        container.appendChild(div);
+    }
+
+    // Remove achievement field
+    function removeAchievement(button) {
+        const container = document.getElementById('achievements-container');
+        if (container.children.length > 1) {
+            button.closest('.achievement-item').remove();
+            // Reindex remaining achievements
+            const items = container.querySelectorAll('.achievement-item');
+            items.forEach((item, index) => {
+                item.querySelector('input').name = `achievements[${index}]`;
+            });
+        } else {
+            // If it's the last item, just clear the value
+            const input = button.previousElementSibling;
+            if (input) input.value = '';
+        }
+    }
+
+    // Get AI suggestions
+    function getAISuggestions() {
+        const educationId = document.querySelector('input[name="id"]')?.value;
+        if (!educationId) return;
+
+        const suggestionsList = document.getElementById('suggestions-list');
+        suggestionsList.innerHTML = `
+            <div class="text-center py-3">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <p class="mt-2 text-muted">Generating suggestions...</p>
+            </div>`;
+
+        fetch(`/builder/education/suggestions/${educationId}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    suggestionsList.innerHTML = `
+                        <div class="alert alert-warning">
+                            <i class="bi bi-exclamation-triangle me-2"></i>
+                            ${data.error}
+                        </div>`;
+                    return;
+                }
+
+                if (data.suggestions && data.suggestions.length > 0) {
+                    let html = '';
+                    data.suggestions.forEach(suggestion => {
+                        html += `
+                            <div class="suggestion-item">
+                                <div class="suggestion-text">${suggestion}</div>
+                                <button class="btn btn-sm btn-outline-primary apply-suggestion" 
+                                        data-suggestion="${suggestion}">
+                                    Apply
+                                </button>
+                            </div>`;
+                    });
+                    suggestionsList.innerHTML = html;
+                    
+                    // Add event listeners to apply buttons
+                    document.querySelectorAll('.apply-suggestion').forEach(button => {
+                        button.addEventListener('click', function() {
+                            // This is a simplified example - you'd want to implement specific logic
+                            // for applying different types of suggestions
+                            alert('Suggestion applied: ' + this.dataset.suggestion);
+                        });
+                    });
+                } else {
+                    suggestionsList.innerHTML = `
+                        <div class="alert alert-info">
+                            <i class="bi bi-info-circle me-2"></i>
+                            No suggestions available at this time.
+                        </div>`;
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching suggestions:', error);
+                suggestionsList.innerHTML = `
+                    <div class="alert alert-danger">
+                        <i class="bi bi-exclamation-octagon me-2"></i>
+                        Failed to load suggestions. Please try again later.
+                    </div>`;
+            });
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+    const isCurrentCheckbox = document.getElementById('isCurrent');
+    const endDateGroup = document.getElementById('endDateGroup');
+
+    if (isCurrentCheckbox && endDateGroup) {
+        // Initial state
+        if (isCurrentCheckbox.checked) {
+            endDateGroup.style.display = 'none';
+        }
+
+        // Toggle end date field based on checkbox
+        isCurrentCheckbox.addEventListener('change', function() {
+            endDateGroup.style.display = this.checked ? 'none' : 'block';
+        });
+    }
+
+    // Form validation
+    document.addEventListener('DOMContentLoaded', function() {
+    // Format dates for form submission
+    const form = document.querySelector('form');
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            const startDateInput = document.getElementById('startDate');
+            const endDateInput = document.getElementById('endDate');
+
+            // Ensure the date is in YYYY-MM format
+            if (startDateInput && startDateInput.value) {
+                startDateInput.value = startDateInput.value + '-01';
+            }
+            if (endDateInput && endDateInput.value) {
+                endDateInput.value = endDateInput.value + '-01';
+            }
+        });
+    }
+});
+</script>
+</body>
+</html>

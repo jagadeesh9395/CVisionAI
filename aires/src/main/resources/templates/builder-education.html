@@ -99,5 +99,47 @@
             </div>
         </aside>
     </div>
+    <!-- Add this script at the end of the body -->
+    <script th:inline="javascript">
+        document.addEventListener('DOMContentLoaded', function() {
+            const continueBtn = document.querySelector('.btn-primary');
+
+            continueBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+
+                // Show loading state
+                const originalText = continueBtn.textContent;
+                continueBtn.disabled = true;
+                continueBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Processing...';
+
+                // Get the resume data from session
+                fetch('/builder/extract-education', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Failed to extract education data');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    // Redirect to education list page
+                    window.location.href = '/builder/education-list';
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    // Fallback to direct navigation if extraction fails
+                    window.location.href = '/builder/education-list';
+                })
+                .finally(() => {
+                    continueBtn.disabled = false;
+                    continueBtn.textContent = originalText;
+                });
+            });
+        });
+    </script>
 </body>
 </html>
