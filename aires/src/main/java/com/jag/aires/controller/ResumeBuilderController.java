@@ -21,6 +21,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.multipart.MultipartFile;
 import jakarta.validation.Valid;
 
+import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -57,29 +58,62 @@ public class ResumeBuilderController {
     @PostMapping("/upload")
     public String handleUpload(@RequestParam("file") MultipartFile file, HttpSession session) {
         try {
-            String rawText = tika.parseToString(file.getInputStream());
-            Map<String, String> sections = splitterService.splitSections(rawText);
+            // Clear any existing session data
+            session.removeAttribute("rawSections");
+            session.removeAttribute("resumeData");
+            session.removeAttribute("processingComplete");
+            session.removeAttribute("processingError");
             
-            if (sections == null || sections.isEmpty()) {
-                return "redirect:/builder/upload-error";
-            }
+            // Store the file in session for processing
+            byte[] fileBytes = file.getBytes();
+            session.setAttribute("uploadedFile", fileBytes);
+            session.setAttribute("originalFilename", file.getOriginalFilename());
             
-            session.setAttribute("rawSections", sections);
-            session.setAttribute("resumeData", new ResumeDocument());
-            
-            // Start processing in a separate thread
+            // Start processing in a background thread
             new Thread(() -> {
                 try {
-                    // Simulate processing time
-                    Thread.sleep(5000);
-                    // Set a flag when processing is complete
+                    // Process the file
+                    String rawText = new Tika().parseToString(new ByteArrayInputStream(fileBytes));
+                    Map<String, String> sections = splitterService.splitSections(rawText);
+                    
+                    if (sections == null || sections.isEmpty()) {
+                        session.setAttribute("processingError", "Failed to extract content from the resume");
+                        session.setAttribute("processingComplete", true);
+                        return;
+                    }
+                    
+                    // Create new resume document
+                    ResumeDocument resume = new ResumeDocument();
+                    
+                    // Extract personal info
+                    if (sections.containsKey("PERSONAL_INFO")) {
+                        PersonalInfo extractedInfo = personalInfoExtractor.extract(sections.get("PERSONAL_INFO"));
+                        extractedInfo = personalInfoRepository.save(extractedInfo);
+                        resume.setPersonalInfo(extractedInfo);
+                    }
+                    
+                    // Save the resume with extracted data
+                    resume.updateTimestamps();
+                    resume = resumeRepository.save(resume);
+                    
+                    // Store in session
+                    session.setAttribute("resumeData", resume);
+                    session.setAttribute("rawSections", sections);
+                    
+                } catch (Exception e) {
+                    log.error("Error processing uploaded file", e);
+                    session.setAttribute("processingError", "An error occurred while processing your resume");
+                } finally {
+                    // Mark processing as complete
                     session.setAttribute("processingComplete", true);
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
-                    log.error("Processing was interrupted", e);
+                    
+                    // Clean up
+                    session.removeAttribute("uploadedFile");
+                    session.removeAttribute("originalFilename");
                 }
             }).start();
             
+            // Redirect to processing page
             return "redirect:/builder/processing";
         } catch (Exception e) {
             log.error("Error processing uploaded file", e);
@@ -89,7 +123,9 @@ public class ResumeBuilderController {
     
     @GetMapping("/processing")
     public String showProcessingPage(HttpSession session) {
-        if (session.getAttribute("rawSections") == null) {
+        // Check if there's a file being processed or if processing is complete
+        if (session.getAttribute("uploadedFile") == null && 
+            session.getAttribute("processingComplete") == null) {
             return "redirect:/";
         }
         return "processing";
@@ -99,7 +135,16 @@ public class ResumeBuilderController {
     @ResponseBody
     public Map<String, Object> checkProcessingStatus(HttpSession session) {
         Map<String, Object> response = new HashMap<>();
-        response.put("complete", session.getAttribute("processingComplete") != null);
+        boolean isComplete = session.getAttribute("processingComplete") != null;
+        response.put("complete", isComplete);
+        
+        if (isComplete) {
+            String error = (String) session.getAttribute("processingError");
+            if (error != null) {
+                response.put("error", error);
+            }
+        }
+        
         return response;
     }
     
@@ -112,24 +157,18 @@ public class ResumeBuilderController {
     @SuppressWarnings("unchecked")
     public String showBasicsForm(HttpSession session, Model model) {
         ResumeDocument resume = getOrCreateResume(session);
-        Map<String, String> sections = (Map<String, String>) session.getAttribute("rawSections");
-
-        // If personal info is not set and we have raw sections, try to extract it
-        if (resume.getPersonalInfo() == null && sections != null && sections.containsKey("PERSONAL_INFO")) {
-            // First save the PersonalInfo to get an ID
-            PersonalInfo extractedInfo = personalInfoExtractor.extract(sections.get("PERSONAL_INFO"));
-            extractedInfo = personalInfoRepository.save(extractedInfo);
-            
-            // Then set it to the resume and save
-            resume.setPersonalInfo(extractedInfo);
-            resume.updateTimestamps();
-            resume = resumeRepository.save(resume);
-            session.setAttribute("resumeData", resume);
+        
+        // If we don't have a resume in session, redirect to upload
+        if (resume == null || resume.getId() == null) {
+            return "redirect:/";
         }
 
-        // Always ensure we have a non-null PersonalInfo in the model
-        PersonalInfo personalInfo = resume.getPersonalInfo() != null ? 
-            resume.getPersonalInfo() : new PersonalInfo();
+        // Get the personal info from the resume
+        PersonalInfo personalInfo = resume.getPersonalInfo();
+        if (personalInfo == null) {
+            personalInfo = new PersonalInfo();
+            resume.setPersonalInfo(personalInfo);
+        }
             
         model.addAttribute("personalInfo", personalInfo);
         return "builder-basics";

@@ -73,9 +73,8 @@
                                     Edit
                                 </a>
                                 <h4 th:text="${edu.degree + ' from ' + edu.institution}">Bachelor of Technology, JNTU Hyderabad</h4>
-                                <p class="meta" th:text="${edu.location}">Hyderabad</p>
-                                <p class="meta" th:text="${edu.duration}">Graduated: May 2019</p>
-                                <p class="meta" th:if="${edu.score != null}" th:text="${'Score/CGPA: ' + edu.score}"></p>
+                                <p class="meta" th:if="${edu.location != null && !edu.location.isEmpty()}" th:text="${edu.location}">Hyderabad</p>
+                                <p class="meta" th:if="${edu.yearOfCompletion != null}" th:text="${'Graduated: ' + edu.yearOfCompletion}">Graduated: 2019</p>
                             </div>
                         </div>
                         <div class="exp-footer">
