@@ -27,6 +27,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.jag.aires.exception.ResourceNotFoundException;
+import org.springframework.dao.DataAccessException;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
+
 @Controller
 @RequestMapping("/builder")
 @RequiredArgsConstructor
@@ -332,38 +337,199 @@ public class ResumeBuilderController {
     // Removed duplicate saveBasics method - consolidated with the one that has validation and error handling
 
     @GetMapping("/experience")
-    public String showExperience() {
-        return "builder-experience";
-    }
-
-    @GetMapping("/experience-list")
-    @SuppressWarnings("unchecked")
-    public String showExperienceList(HttpSession session, Model model) {
+    public String showExperience(HttpSession session, Model model) {
         try {
-            Map<String, String> sections = (Map<String, String>) session.getAttribute("rawSections");
             ResumeDocument resume = getOrCreateResume(session);
-
-            if (resume != null && (resume.getWorkExperience() == null || resume.getWorkExperience().isEmpty()) 
-                    && sections != null && sections.containsKey("EXPERIENCE")) {
-                List<WorkExperience> experiences = experienceExtractor.extract(sections.get("EXPERIENCE"));
-                if (experiences != null && !experiences.isEmpty()) {
-                    // Save each work experience first
-                    List<WorkExperience> savedExperiences = new ArrayList<>();
-                    for (WorkExperience exp : experiences) {
-                        if (exp != null) {
-                            exp = workExperienceRepository.save(exp);
-                            savedExperiences.add(exp);
-                        }
-                    }
-                    // Then set the saved experiences to the resume
-                    resume.setWorkExperience(savedExperiences);
-                    resume.updateTimestamps();
-                    resume = resumeRepository.save(resume);
-                    session.setAttribute("resumeData", resume);
-                }
+            if (resume == null) {
+                return "redirect:/";
+            }
+            return "builder-experience";
+        } catch (Exception e) {
+            log.error("Error loading experience page", e);
+            return "redirect:/builder/error";
+        }
+    }
+    @PostMapping("/experience/process")
+    public String processExperience(HttpSession session, RedirectAttributes redirectAttributes) {
+        try {
+            ResumeDocument resume = getOrCreateResume(session);
+            if (resume == null) {
+                return "redirect:/";
             }
 
-            model.addAttribute("experiences", resume != null ? resume.getWorkExperience() : null);
+            Map<String, String> sections = (Map<String, String>) session.getAttribute("rawSections");
+            if (sections == null || !sections.containsKey("EXPERIENCE")) {
+                redirectAttributes.addFlashAttribute("error", "No experience data found to process");
+                return "redirect:/builder/experience";
+            }
+
+            String experienceText = sections.get("EXPERIENCE");
+            if (experienceText == null || experienceText.trim().isEmpty()) {
+                redirectAttributes.addFlashAttribute("error", "Experience section is empty");
+                return "redirect:/builder/experience";
+            }
+
+            // Extract and save experiences
+            List<WorkExperience> experiences = experienceExtractor.extract(experienceText);
+            if (experiences != null && !experiences.isEmpty()) {
+                List<WorkExperience> savedExperiences = new ArrayList<>();
+                for (WorkExperience exp : experiences) {
+                    if (exp != null) {
+                        // Ensure description is never null
+                        if (exp.getDescription() == null) {
+                            exp.setDescription(new ArrayList<>());
+                        }
+                        exp.setResumeId(resume.getId());
+                        exp = workExperienceRepository.save(exp);
+                        savedExperiences.add(exp);
+                    }
+                }
+                // Update resume with saved experiences
+                resume.setWorkExperience(savedExperiences);
+                resume.updateTimestamps();
+                resumeRepository.save(resume);
+            }
+
+            return "redirect:/builder/experience/list";
+        } catch (Exception e) {
+            log.error("Error processing experience", e);
+            redirectAttributes.addFlashAttribute("error", "Error processing experience: " + e.getMessage());
+            return "redirect:/builder/experience";
+        }
+    }
+
+    @GetMapping("/experience/add")
+    public String showAddExperienceForm(Model model) {
+        model.addAttribute("workExperience", new WorkExperience());
+        return "builder-experience-form";
+    }
+
+    @PostMapping("/experience/save")
+    public String saveExperience(
+            @Valid @ModelAttribute("workExperience") WorkExperience workExperience,
+            BindingResult result,
+            HttpSession session,
+            @RequestParam(required = false) String action) {
+
+        if (result.hasErrors()) {
+            return "builder-experience-form";
+        }
+
+        ResumeDocument resume = getOrCreateResume(session);
+        if (resume == null || resume.getId() == null) {
+            return "redirect:/";
+        }
+
+        try {
+            workExperience.setResumeId(resume.getId());
+            workExperienceRepository.save(workExperience);
+
+            if ("saveAndAddAnother".equals(action)) {
+                return "redirect:/builder/experience/add";
+            }
+            return "redirect:/builder/experience";
+
+        } catch (DataAccessException e) {
+            log.error("Database error saving work experience", e);
+            result.reject("error.database", "Error saving to database. Please try again.");
+            return "builder-experience-form";
+        } catch (Exception e) {
+            log.error("Error saving work experience", e);
+            result.reject("error.experience", "An unexpected error occurred. Please try again.");
+            return "builder-experience-form";
+        }
+    }
+
+    @GetMapping("/experience/edit/{id}")
+    public String showEditExperienceForm(@PathVariable String id, Model model, HttpSession session) {
+        ResumeDocument resume = getOrCreateResume(session);
+        if (resume == null || resume.getId() == null) {
+            return "redirect:/";
+        }
+
+        WorkExperience experience = workExperienceRepository.findByIdAndResumeId(id, resume.getId())
+                .orElseThrow(() -> new ResourceNotFoundException("Experience not found with id: " + id));
+
+        model.addAttribute("workExperience", experience);
+        return "builder-experience-form";
+    }
+
+    @PostMapping("/experience/delete/{id}")
+    public String deleteExperience(@PathVariable String id, HttpSession session) {
+        ResumeDocument resume = getOrCreateResume(session);
+        if (resume == null || resume.getId() == null) {
+            return "redirect:/";
+        }
+
+        try {
+            workExperienceRepository.deleteByIdAndResumeId(id, resume.getId());
+            return "redirect:/builder/experience?success=deleted";
+        } catch (Exception e) {
+            log.error("Error deleting work experience", e);
+            return "redirect:/builder/experience?error=delete_failed";
+        }
+    }
+
+    @GetMapping("/experience/suggestions/{id}")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> getExperienceSuggestions(@PathVariable String id, HttpSession session) {
+        Map<String, Object> response = new HashMap<>();
+        ResumeDocument resume = getOrCreateResume(session);
+
+        if (resume == null || resume.getId() == null) {
+            response.put("error", "Session expired or invalid");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+        }
+
+        try {
+            WorkExperience experience = workExperienceRepository.findByIdAndResumeId(id, resume.getId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Experience not found with id: " + id));
+
+            List<String> suggestions = new ArrayList<>();
+
+            if (experience.getRole() != null) {
+                suggestions.add("Consider using action verbs in your role description");
+                suggestions.add("Add specific achievements and metrics if available");
+            }
+
+            if (experience.getStartDate() != null && experience.getEndDate() == null) {
+                suggestions.add("Add an end date or mark as 'Present' if currently working here");
+            }
+
+            if (experience.getDescription() == null || experience.getDescription().isEmpty()) {
+                suggestions.add("Add bullet points describing your responsibilities and achievements");
+            } else {
+                suggestions.add("Consider quantifying your achievements with numbers and metrics");
+            }
+
+            response.put("suggestions", suggestions);
+            return ResponseEntity.ok(response);
+
+        } catch (ResourceNotFoundException e) {
+            log.error("Experience not found", e);
+            response.put("error", "Experience not found");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+        } catch (Exception e) {
+            log.error("Error generating suggestions", e);
+            response.put("error", "Error generating suggestions");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+    }
+
+    @GetMapping("/experience/list")
+    public String showExperienceList(HttpSession session, Model model) {
+        try {
+            ResumeDocument resume = getOrCreateResume(session);
+            if (resume == null) {
+                return "redirect:/";
+            }
+
+            List<WorkExperience> experiences = workExperienceRepository.findByResumeId(resume.getId());
+            if (experiences == null) {
+                experiences = new ArrayList<>();
+            }
+
+            model.addAttribute("experiences", experiences);
             return "builder-experience-list";
         } catch (Exception e) {
             log.error("Error loading experience list", e);

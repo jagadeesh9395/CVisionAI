@@ -1,0 +1,103 @@
+<!-- src/main/resources/templates/builder-experience-form.html -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${workExperience.id != null} ? 'Edit Experience' : 'Add Experience'">Add Experience</title>
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h3 th:text="${workExperience.id != null} ? 'Edit Work Experience' : 'Add Work Experience'">Add Work Experience</h3>
+                </div>
+                <div class="card-body">
+                    <form th:action="@{/builder/experience/save}" th:object="${workExperience}" method="post">
+                        <input type="hidden" th:field="*{id}">
+                        <input type="hidden" th:field="*{resumeId}">
+
+                        <div class="mb-3">
+                            <label for="company" class="form-label">Company Name *</label>
+                            <input type="text" class="form-control" id="company" th:field="*{company}" required>
+                            <div class="invalid-feedback" th:if="${#fields.hasErrors('company')}" th:errors="*{company}"></div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="role" class="form-label">Job Title *</label>
+                            <input type="text" class="form-control" id="role" th:field="*{role}" required>
+                            <div class="invalid-feedback" th:if="${#fields.hasErrors('role')}" th:errors="*{role}"></div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="startDate" class="form-label">Start Date *</label>
+                                <input type="text" class="form-control" id="startDate" th:field="*{startDate}"
+                                       placeholder="e.g., Jan 2020" required>
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('startDate')}" th:errors="*{startDate}"></div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="endDate" class="form-label">End Date (or 'Present')</label>
+                                <input type="text" class="form-control" id="endDate" th:field="*{endDate}"
+                                       placeholder="e.g., Dec 2022 or Present">
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="location" class="form-label">Location</label>
+                            <input type="text" class="form-control" id="location" th:field="*{location}"
+                                   placeholder="e.g., San Francisco, CA">
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Description</label>
+                            <div id="descriptionContainer">
+                                <div class="input-group mb-2" th:each="desc, iter : *{description}">
+                                    <input type="text" class="form-control" th:value="${desc}"
+                                           th:name="description" placeholder="Responsibility or achievement">
+                                    <button type="button" class="btn btn-outline-danger" onclick="removeDescription(this)">Remove</button>
+                                </div>
+                            </div>
+                            <button type="button" class="btn btn-outline-secondary btn-sm mt-2"
+                                    onclick="addDescription()">+ Add Description Point</button>
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                            <a th:href="@{/builder/experience}" class="btn btn-secondary">Cancel</a>
+                            <div>
+                                <button type="submit" name="action" value="saveAndAddAnother"
+                                        class="btn btn-outline-primary">Save & Add Another</button>
+                                <button type="submit" class="btn btn-primary">Save Experience</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function addDescription() {
+        const container = document.getElementById('descriptionContainer');
+        const newInput = document.createElement('div');
+        newInput.className = 'input-group mb-2';
+        newInput.innerHTML = `
+            <input type="text" class="form-control" name="description" placeholder="Responsibility or achievement">
+            <button type="button" class="btn btn-outline-danger" onclick="removeDescription(this)">Remove</button>
+        `;
+        container.appendChild(newInput);
+    }
+
+    function removeDescription(button) {
+        button.closest('.input-group').remove();
+    }
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

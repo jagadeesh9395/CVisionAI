@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -21,20 +22,23 @@ public class ExperienceExtractor implements ResumeSectionExtractor<List<WorkExpe
 
   @Override
   public List<WorkExperience> extract(String sectionText) {
+    if (sectionText == null || sectionText.trim().isEmpty()) {
+      return new ArrayList<>();
+    }
     String schema = """
-        {
-          "work_experience": [
             {
-              "company": "string",
-              "location": "string",
-              "role": "string",
-              "start_date": "string",
-              "end_date": "string",
-              "description": "string"
+              "work_experience": [
+                {
+                  "company": "string (required)",
+                  "role": "string (required)",
+                  "startDate": "string (format: MM/YYYY, required)",
+                  "endDate": "string (format: MM/YYYY or 'Present', required)",
+                  "location": "string (optional)",
+                  "description": ["string (optional, array of responsibilities/achievements]"
+                }
+              ]
             }
-          ]
-        }
-        """;
+            """;
     String response = ollamaPromptService.analyzeText(sectionText, schema);
     try {
       var node = objectMapper.readTree(response);
