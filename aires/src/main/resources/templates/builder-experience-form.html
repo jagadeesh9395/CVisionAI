@@ -133,14 +133,23 @@
                 <label>Employment Period *</label>
                 <div class="row g-3">
                     <div class="col-md-6">
-                        <input type="month" class="form-control" id="startDate"
-                               th:field="*{startDate}" required>
-                        <div class="text-danger" th:if="${#fields.hasErrors('startDate')}"
-                             th:errors="*{startDate}"></div>
+                        <input type="text" class="form-control" id="startDate"
+                               th:field="*{period.startDate}" 
+                               pattern="(0[1-9]|1[0-2])\/\d{4}"
+                               placeholder="MM/YYYY" 
+                               required>
+                        <small class="form-text text-muted">Format: MM/YYYY (e.g., 01/2023)</small>
+                        <div class="text-danger" th:if="${#fields.hasErrors('period.startDate')}"
+                             th:errors="*{period.startDate}"></div>
                     </div>
                     <div class="col-md-6">
-                        <input type="month" class="form-control" id="endDate"
-                               th:field="*{endDate}">
+                        <input type="text" class="form-control" id="endDate"
+                               th:field="*{period.endDate}"
+                               pattern="(0[1-9]|1[0-2])\/\d{4}|[Pp]resent"
+                               placeholder="MM/YYYY or Present">
+                        <small class="form-text text-muted">Leave empty if current position</small>
+                        <div class="text-danger" th:if="${#fields.hasErrors('period.endDate')}"
+                             th:errors="*{period.endDate}"></div>
                     </div>
                 </div>
             </div>
@@ -191,6 +200,25 @@
         </form>
 
         <script>
+            // Add date format validation
+            document.getElementById('startDate')?.addEventListener('change', function(e) {
+                const pattern = /^(0[1-9]|1[0-2])\/(19|20)\d{2}$/;
+                if (!pattern.test(e.target.value)) {
+                    e.target.setCustomValidity('Please enter a valid date in MM/YYYY format');
+                } else {
+                    e.target.setCustomValidity('');
+                }
+            });
+
+            document.getElementById('endDate')?.addEventListener('change', function(e) {
+                const pattern = /^(0[1-9]|1[0-2])\/(19|20)\d{2}$|^[Pp]resent$/;
+                if (e.target.value && !pattern.test(e.target.value)) {
+                    e.target.setCustomValidity('Please enter a valid date in MM/YYYY format or "Present"');
+                } else {
+                    e.target.setCustomValidity('');
+                }
+            });
+
             function addDescription() {
                 const container = document.getElementById('descriptionContainer');
                 const newInput = document.createElement('div');

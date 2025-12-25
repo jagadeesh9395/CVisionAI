@@ -2,6 +2,7 @@ package com.jag.aires.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.jag.aires.util.ExperiencePeriod;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
@@ -31,16 +32,8 @@ public class Education {
 
     private String fieldOfStudy;
 
-    @NotNull(message = "Start date is required")
-    @DateTimeFormat(pattern = "yyyy-MM")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM")
-    @Field("start_date")
-    private Date startDate;
-
-    @DateTimeFormat(pattern = "yyyy-MM")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM")
-    @Field("end_date")
-    private Date endDate;
+    @NotNull(message = "Period is required")
+    private ExperiencePeriod period;
 
     @Field("is_current")
     private Boolean isCurrent = false;  // Changed from boolean to Boolean

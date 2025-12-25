@@ -214,25 +214,40 @@
 
             <div class="row">
                 <div class="col-md-6">
-                    <div class="form-group">
+                    <div class="form-group" th:classappend="${#fields.hasErrors('period.startDate')} ? 'has-error' : ''">
                         <label for="startDate">Start Date <span class="text-danger">*</span></label>
-                        <input type="month" class="form-control" id="startDate" th:field="*{startDate}" required/>
-                        <div class="text-danger" th:if="${#fields.hasErrors('startDate')}" th:errors="*{startDate}"></div>
+                        <input type="text" class="form-control" id="startDate" 
+                               th:field="*{period.startDate}" 
+                               pattern="(0[1-9]|1[0-2])\/\d{4}"
+                               placeholder="MM/YYYY" 
+                               required
+                               th:class="${#fields.hasErrors('period.startDate')} ? 'is-invalid' : ''"/>
+                        <small class="form-text text-muted">Format: MM/YYYY (e.g., 09/2020)</small>
+                        <div class="text-danger" th:if="${#fields.hasErrors('period.startDate')}" 
+                             th:errors="*{period.startDate}"></div>
                     </div>
                 </div>
 
                 <div class="col-md-6">
                     <div class="form-group">
                         <label for="endDate">End Date <span class="text-muted" th:unless="${education.isCurrent}">(or expected)</span></label>
-                        <input type="month" class="form-control" id="endDate" th:field="*{endDate}"
-                               th:disabled="${education.isCurrent}"/>
-                        <div class="form-group">
-                            <label for="isCurrent">Currently Studying Here</label>
-                            <div class="form-check">
-                                <input type="checkbox" class="form-check-input" id="isCurrent"
-                                       th:field="*{isCurrent}" th:checked="*{isCurrent}">
-                                <label class="form-check-label" for="isCurrent">I am currently studying here</label>
+                        <div class="input-group">
+                            <input type="text" class="form-control" id="endDate" 
+                                   th:field="*{period.endDate}"
+                                   pattern="(0[1-9]|1[0-2])\/\d{4}"
+                                   placeholder="MM/YYYY"
+                                   th:disabled="${education.isCurrent}"
+                                   th:class="${#fields.hasErrors('period.endDate')} ? 'is-invalid' : ''">
+                            <div class="input-group-append">
+                                <div class="input-group-text">
+                                    <input type="checkbox" class="form-check-input" id="isCurrent"
+                                           th:field="*{isCurrent}" th:checked="*{isCurrent}">
+                                    <label class="form-check-label ms-2" for="isCurrent">Currently Studying</label>
+                                </div>
                             </div>
+                            <small class="form-text text-muted w-100">Leave empty if currently studying</small>
+                            <div class="invalid-feedback" th:if="${#fields.hasErrors('period.endDate')}" 
+                                 th:errors="*{period.endDate}"></div>
                         </div>
                     </div>
                 </div>
@@ -488,41 +503,78 @@
             });
     }
 
-    document.addEventListener('DOMContentLoaded', function() {
-    const isCurrentCheckbox = document.getElementById('isCurrent');
-    const endDateGroup = document.getElementById('endDateGroup');
+    // Add date format validation
+    document.getElementById('startDate')?.addEventListener('change', function(e) {
+        const pattern = /^(0[1-9]|1[0-2])\/(19|20)\d{2}$/;
+        if (!pattern.test(e.target.value)) {
+            e.target.setCustomValidity('Please enter a valid date in MM/YYYY format');
+        } else {
+            e.target.setCustomValidity('');
+        }
+    });
 
-    if (isCurrentCheckbox && endDateGroup) {
-        // Initial state
-        if (isCurrentCheckbox.checked) {
-            endDateGroup.style.display = 'none';
+    document.getElementById('endDate')?.addEventListener('change', function(e) {
+        const pattern = /^(0[1-9]|1[0-2])\/(19|20)\d{2}$|^$/;
+        if (e.target.value && !pattern.test(e.target.value)) {
+            e.target.setCustomValidity('Please enter a valid date in MM/YYYY format or leave empty for current');
+        } else {
+            e.target.setCustomValidity('');
+        }
+    });
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const isCurrentCheckbox = document.getElementById('isCurrent');
+        const endDateInput = document.getElementById('endDate');
+        const startDateInput = document.getElementById('startDate');
+
+        // Handle the "Currently Studying" checkbox
+        function updateEndDateField() {
+            if (isCurrentCheckbox.checked) {
+                endDateInput.disabled = true;
+                endDateInput.value = ''; // Clear the end date when "Currently Studying" is checked
+            } else {
+                endDateInput.disabled = false;
+            }
         }
 
-        // Toggle end date field based on checkbox
-        isCurrentCheckbox.addEventListener('change', function() {
-            endDateGroup.style.display = this.checked ? 'none' : 'block';
-        });
-    }
+        // Initialize the form state
+        if (isCurrentCheckbox && endDateInput) {
+            updateEndDateField();
+            
+            // Toggle end date field based on checkbox
+            isCurrentCheckbox.addEventListener('change', updateEndDateField);
+        }
 
-    // Form validation
-    document.addEventListener('DOMContentLoaded', function() {
-    // Format dates for form submission
-    const form = document.querySelector('form');
-    if (form) {
-        form.addEventListener('submit', function(e) {
-            const startDateInput = document.getElementById('startDate');
-            const endDateInput = document.getElementById('endDate');
-
-            // Ensure the date is in YYYY-MM format
-            if (startDateInput && startDateInput.value) {
-                startDateInput.value = startDateInput.value + '-01';
-            }
-            if (endDateInput && endDateInput.value) {
-                endDateInput.value = endDateInput.value + '-01';
-            }
-        });
-    }
-});
+        // Form validation and date handling
+        const form = document.querySelector('form');
+        if (form) {
+            form.addEventListener('submit', function(e) {
+                // If "Currently Studying" is checked, ensure endDate is empty
+                if (isCurrentCheckbox.checked) {
+                    endDateInput.disabled = false; // Temporarily enable to submit the value
+                    endDateInput.value = ''; // Clear the value
+                }
+                
+                // The form will be submitted normally
+            });
+        }
+        
+        // Format dates for display when editing
+        function formatDateForInput(dateString) {
+            if (!dateString) return '';
+            // Convert from YYYY-MM to MM/YYYY for display
+            const [year, month] = dateString.split('-');
+            return `${month}/${year}`;
+        }
+        
+        // Initialize date fields if they have values
+        if (startDateInput && startDateInput.value) {
+            startDateInput.value = formatDateForInput(startDateInput.value);
+        }
+        if (endDateInput && endDateInput.value) {
+            endDateInput.value = formatDateForInput(endDateInput.value);
+        }
+    });
 </script>
 </body>
 </html>

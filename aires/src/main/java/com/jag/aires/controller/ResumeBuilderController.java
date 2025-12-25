@@ -11,6 +11,7 @@ import com.jag.aires.repository.PersonalInfoRepository;
 import com.jag.aires.repository.ResumeRepository;
 import com.jag.aires.repository.WorkExperienceRepository;
 import com.jag.aires.service.ResumeSectionSplitterService;
+import com.jag.aires.util.ExperiencePeriod;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +28,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.ByteArrayInputStream;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @Controller
@@ -309,10 +311,12 @@ public class ResumeBuilderController {
 
                         // Format duration
                         StringBuilder duration = new StringBuilder();
-                        if (experience.getStartDate() != null) {
-                            duration.append(experience.getStartDate());
-                            if (experience.getEndDate() != null) {
-                                duration.append(" – ").append(experience.getEndDate());
+                        if (experience.getPeriod() != null && experience.getPeriod().getStartDate() != null) {
+                            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/yyyy");
+                            duration.append(experience.getPeriod().getStartDate().format(formatter));
+
+                            if (experience.getPeriod().getEndDate() != null) {
+                                duration.append(" – ").append(experience.getPeriod().getEndDate().format(formatter));
                             } else {
                                 duration.append(" – Present");
                             }
@@ -408,8 +412,7 @@ public class ResumeBuilderController {
     public String saveExperience(
             @Valid @ModelAttribute("workExperience") WorkExperience workExperience,
             BindingResult result,
-            HttpSession session,
-            @RequestParam(required = false) String action) {
+            HttpSession session) {
 
         if (result.hasErrors()) {
             return "builder-experience-form";
@@ -419,6 +422,11 @@ public class ResumeBuilderController {
             ResumeDocument resume = getOrCreateResume(session);
             if (resume == null) {
                 return "redirect:/";
+            }
+
+            // Ensure period is properly set
+            if (workExperience.getPeriod() == null) {
+                workExperience.setPeriod(new ExperiencePeriod());
             }
 
             // Set resume ID if it's a new experience
@@ -438,11 +446,7 @@ public class ResumeBuilderController {
             }
             resumeRepository.save(resume);
 
-            // Handle redirection based on the action
-            if ("saveAndAddAnother".equals(action)) {
-                return "redirect:/builder/experience/add";
-            }
-            return "redirect:/builder/experience/list";
+            return "redirect:/builder/experience/list?success=saved";
 
         } catch (Exception e) {
             log.error("Error saving work experience", e);
@@ -513,7 +517,9 @@ public class ResumeBuilderController {
                 suggestions.add("Add specific achievements and metrics if available");
             }
 
-            if (experience.getStartDate() != null && experience.getEndDate() == null) {
+            if (experience.getPeriod() != null &&
+                    experience.getPeriod().getStartDate() != null &&
+                    experience.getPeriod().getEndDate() == null) {
                 suggestions.add("Add an end date or mark as 'Present' if currently working here");
             }
 
@@ -548,6 +554,13 @@ public class ResumeBuilderController {
             List<WorkExperience> experiences = workExperienceRepository.findByResumeId(resume.getId());
             if (experiences == null) {
                 experiences = new ArrayList<>();
+            }
+
+            // Ensure all experiences have a valid period
+            for (WorkExperience exp : experiences) {
+                if (exp.getPeriod() == null) {
+                    exp.setPeriod(new ExperiencePeriod());
+                }
             }
 
             model.addAttribute("experiences", experiences);
@@ -666,7 +679,10 @@ public class ResumeBuilderController {
                 education.setIsCurrent(false);
             }
             if (education.getIsCurrent()) {
-                education.setEndDate(null);
+                if (education.getPeriod() == null) {
+                    education.setPeriod(new ExperiencePeriod());
+                }
+                education.getPeriod().setEndDate(null);
             }
 
             // Save the education
@@ -756,8 +772,10 @@ public class ResumeBuilderController {
                 suggestions.add("Include your GPA if it's 3.0 or higher");
             }
 
-            if (education.getEndDate() == null && (education.getIsCurrent() == null || !education.getIsCurrent())) {
-                suggestions.add("Mark as 'Current' if you're still studying here");
+            if (education.getPeriod() != null &&
+                    education.getPeriod().getEndDate() == null &&
+                    (education.getIsCurrent() == null || !education.getIsCurrent())) {
+                suggestions.add("Mark as 'Currently Studying' if you're still studying here");
             }
 
             if (education.getAchievements() == null || education.getAchievements().isEmpty()) {

@@ -157,16 +157,10 @@
                         <p class="education-institution" th:text="${edu.institution}">Institution</p>
                         <div class="education-meta">
                             <span th:if="${edu.location}"> <i class="bi bi-geo-alt"></i> <span th:text="${edu.location}">Location</span> </span>
-                            <span th:if="${edu.startDate}">
-                     <i class="bi bi-calendar3"></i>
-                     <span th:text="${#temporals.format(edu.startDate, 'MMM yyyy')}">Start Date</span>
-                     <span th:if="${edu.endDate}">
-                     - <span th:text="${#temporals.format(edu.endDate, 'MMM yyyy')}">End Date</span>
-                     </span>
-                     <span th:if="${edu.isCurrent}">
-                     - Present
-                     </span>
-                     </span>
+                            <span th:if="${edu.period}">
+                                <i class="bi bi-calendar3"></i>
+                                <span th:text="${edu.period.displayPeriod}"></span>
+                            </span>
                             <span th:if="${edu.grade}"> <i class="bi bi-award"></i> <span th:text="${edu.grade}">Grade</span> </span>
                         </div>
                     </div>

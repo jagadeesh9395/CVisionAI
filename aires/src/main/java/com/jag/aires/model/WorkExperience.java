@@ -2,11 +2,14 @@
 package com.jag.aires.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.jag.aires.util.ExperiencePeriod;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.DocumentReference;
 import org.springframework.data.mongodb.core.mapping.Field;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -29,14 +32,20 @@ public class WorkExperience {
     @NotBlank(message = "Job title is required")
     private String role;
 
-    @NotNull(message = "Start date is required")
-    @DateTimeFormat(pattern = "yyyy-MM")
-    @JsonProperty("start_date")
-    private Date startDate;
+    //    @DocumentReference
+    @Field("period")
+    private ExperiencePeriod period;
 
-    @JsonProperty("end_date")
-    @DateTimeFormat(pattern = "yyyy-MM")
-    private Date endDate;
+    public ExperiencePeriod getPeriod() {
+        if (period == null) {
+            period = new ExperiencePeriod();
+        }
+        return period;
+    }
+
+    public void setPeriod(ExperiencePeriod period) {
+        this.period = period;
+    }
 
     @Field("description")
     private List<String> description = new ArrayList<>();
