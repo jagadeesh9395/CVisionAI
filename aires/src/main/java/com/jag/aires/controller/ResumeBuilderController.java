@@ -1,5 +1,6 @@
 package com.jag.aires.controller;
 
+import com.jag.aires.exception.ResourceNotFoundException;
 import com.jag.aires.extractor.*;
 import com.jag.aires.model.PersonalInfo;
 import com.jag.aires.model.ResumeDocument;
@@ -9,28 +10,25 @@ import com.jag.aires.repository.ResumeRepository;
 import com.jag.aires.repository.WorkExperienceRepository;
 import com.jag.aires.service.ResumeSectionSplitterService;
 import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.tika.Tika;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.multipart.MultipartFile;
-import jakarta.validation.Valid;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import com.jag.aires.exception.ResourceNotFoundException;
-import org.springframework.dao.DataAccessException;
-import org.springframework.http.ResponseEntity;
-import org.springframework.http.HttpStatus;
 
 @Controller
 @RequestMapping("/builder")
@@ -47,7 +45,7 @@ public class ResumeBuilderController {
     private final ResumeRepository resumeRepository;
     private final PersonalInfoRepository personalInfoRepository;
     private final WorkExperienceRepository workExperienceRepository;
-    
+
     private ResumeDocument getOrCreateResume(HttpSession session) {
         ResumeDocument resume = (ResumeDocument) session.getAttribute("resumeData");
         if (resume == null) {
@@ -58,6 +56,7 @@ public class ResumeBuilderController {
         }
         return resume;
     }
+
     private final Tika tika = new Tika();
 
     @PostMapping("/upload")
@@ -68,56 +67,56 @@ public class ResumeBuilderController {
             session.removeAttribute("resumeData");
             session.removeAttribute("processingComplete");
             session.removeAttribute("processingError");
-            
+
             // Store the file in session for processing
             byte[] fileBytes = file.getBytes();
             session.setAttribute("uploadedFile", fileBytes);
             session.setAttribute("originalFilename", file.getOriginalFilename());
-            
+
             // Start processing in a background thread
             new Thread(() -> {
                 try {
                     // Process the file
                     String rawText = new Tika().parseToString(new ByteArrayInputStream(fileBytes));
                     Map<String, String> sections = splitterService.splitSections(rawText);
-                    
+
                     if (sections == null || sections.isEmpty()) {
                         session.setAttribute("processingError", "Failed to extract content from the resume");
                         session.setAttribute("processingComplete", true);
                         return;
                     }
-                    
+
                     // Create new resume document
                     ResumeDocument resume = new ResumeDocument();
-                    
+
                     // Extract personal info
                     if (sections.containsKey("PERSONAL_INFO")) {
                         PersonalInfo extractedInfo = personalInfoExtractor.extract(sections.get("PERSONAL_INFO"));
                         extractedInfo = personalInfoRepository.save(extractedInfo);
                         resume.setPersonalInfo(extractedInfo);
                     }
-                    
+
                     // Save the resume with extracted data
                     resume.updateTimestamps();
                     resume = resumeRepository.save(resume);
-                    
+
                     // Store in session
                     session.setAttribute("resumeData", resume);
                     session.setAttribute("rawSections", sections);
-                    
+
                 } catch (Exception e) {
                     log.error("Error processing uploaded file", e);
                     session.setAttribute("processingError", "An error occurred while processing your resume");
                 } finally {
                     // Mark processing as complete
                     session.setAttribute("processingComplete", true);
-                    
+
                     // Clean up
                     session.removeAttribute("uploadedFile");
                     session.removeAttribute("originalFilename");
                 }
             }).start();
-            
+
             // Redirect to processing page
             return "redirect:/builder/processing";
         } catch (Exception e) {
@@ -125,34 +124,34 @@ public class ResumeBuilderController {
             return "redirect:/builder/upload-error";
         }
     }
-    
+
     @GetMapping("/processing")
     public String showProcessingPage(HttpSession session) {
         // Check if there's a file being processed or if processing is complete
-        if (session.getAttribute("uploadedFile") == null && 
-            session.getAttribute("processingComplete") == null) {
+        if (session.getAttribute("uploadedFile") == null &&
+                session.getAttribute("processingComplete") == null) {
             return "redirect:/";
         }
         return "processing";
     }
-    
+
     @GetMapping("/check-status")
     @ResponseBody
     public Map<String, Object> checkProcessingStatus(HttpSession session) {
         Map<String, Object> response = new HashMap<>();
         boolean isComplete = session.getAttribute("processingComplete") != null;
         response.put("complete", isComplete);
-        
+
         if (isComplete) {
             String error = (String) session.getAttribute("processingError");
             if (error != null) {
                 response.put("error", error);
             }
         }
-        
+
         return response;
     }
-    
+
     @GetMapping("/upload-error")
     public String showUploadError() {
         return "upload-error";
@@ -162,7 +161,7 @@ public class ResumeBuilderController {
     @SuppressWarnings("unchecked")
     public String showBasicsForm(HttpSession session, Model model) {
         ResumeDocument resume = getOrCreateResume(session);
-        
+
         // If we don't have a resume in session, redirect to upload
         if (resume == null || resume.getId() == null) {
             return "redirect:/";
@@ -174,7 +173,7 @@ public class ResumeBuilderController {
             personalInfo = new PersonalInfo();
             resume.setPersonalInfo(personalInfo);
         }
-            
+
         model.addAttribute("personalInfo", personalInfo);
         return "builder-basics";
     }
@@ -192,7 +191,7 @@ public class ResumeBuilderController {
 
         try {
             ResumeDocument resume = getOrCreateResume(session);
-            
+
             // Handle the PersonalInfo save/update
             PersonalInfo savedPersonalInfo;
             if (resume.getPersonalInfo() != null && resume.getPersonalInfo().getId() != null) {
@@ -203,26 +202,26 @@ public class ResumeBuilderController {
                 // Create new PersonalInfo
                 savedPersonalInfo = personalInfoRepository.save(personalInfo);
             }
-            
+
             // Set the saved PersonalInfo to the ResumeDocument
             resume.setPersonalInfo(savedPersonalInfo);
             resume.updateTimestamps();
-            
+
             // Save the ResumeDocument
             resume = resumeRepository.save(resume);
-            
+
             // Update session with the latest data
             session.setAttribute("resumeData", resume);
-            
+
             redirectAttributes.addFlashAttribute("success", "Personal information saved successfully!");
             return "redirect:/builder/experience";
-            
+
         } catch (Exception e) {
             log.error("Error saving personal info", e);
             redirectAttributes.addFlashAttribute(
-                "error", 
-                "Failed to save personal information: " + 
-                (e.getMessage() != null ? e.getMessage() : "Unknown error")
+                    "error",
+                    "Failed to save personal information: " +
+                            (e.getMessage() != null ? e.getMessage() : "Unknown error")
             );
             return "redirect:/builder/basics";
         }
@@ -268,7 +267,7 @@ public class ResumeBuilderController {
 
             // Handle work experience extraction
             try {
-                if ((resume.getWorkExperience() == null || resume.getWorkExperience().isEmpty()) 
+                if ((resume.getWorkExperience() == null || resume.getWorkExperience().isEmpty())
                         && sections.containsKey("EXPERIENCE")) {
                     List<WorkExperience> experiences = experienceExtractor.extract(sections.get("EXPERIENCE"));
                     if (experiences != null && !experiences.isEmpty()) {
@@ -349,6 +348,7 @@ public class ResumeBuilderController {
             return "redirect:/builder/error";
         }
     }
+
     @PostMapping("/experience/process")
     public String processExperience(HttpSession session, RedirectAttributes redirectAttributes) {
         try {
@@ -415,28 +415,38 @@ public class ResumeBuilderController {
             return "builder-experience-form";
         }
 
-        ResumeDocument resume = getOrCreateResume(session);
-        if (resume == null || resume.getId() == null) {
-            return "redirect:/";
-        }
-
         try {
-            workExperience.setResumeId(resume.getId());
-            workExperienceRepository.save(workExperience);
+            ResumeDocument resume = getOrCreateResume(session);
+            if (resume == null) {
+                return "redirect:/";
+            }
 
+            // Set resume ID if it's a new experience
+            if (workExperience.getResumeId() == null) {
+                workExperience.setResumeId(resume.getId());
+            }
+
+            // Save the work experience
+            workExperience = workExperienceRepository.save(workExperience);
+
+            // Update the resume's work experiences
+            if (resume.getWorkExperience() == null) {
+                resume.setWorkExperience(new ArrayList<>());
+            }
+            if (!resume.getWorkExperience().contains(workExperience)) {
+                resume.getWorkExperience().add(workExperience);
+            }
+            resumeRepository.save(resume);
+
+            // Handle redirection based on the action
             if ("saveAndAddAnother".equals(action)) {
                 return "redirect:/builder/experience/add";
             }
-            return "redirect:/builder/experience";
+            return "redirect:/builder/experience/list";
 
-        } catch (DataAccessException e) {
-            log.error("Database error saving work experience", e);
-            result.reject("error.database", "Error saving to database. Please try again.");
-            return "builder-experience-form";
         } catch (Exception e) {
             log.error("Error saving work experience", e);
-            result.reject("error.experience", "An unexpected error occurred. Please try again.");
-            return "builder-experience-form";
+            return "redirect:/builder/experience?error";
         }
     }
 
@@ -455,7 +465,11 @@ public class ResumeBuilderController {
     }
 
     @PostMapping("/experience/delete/{id}")
-    public String deleteExperience(@PathVariable String id, HttpSession session) {
+    public String deleteExperience(
+            @PathVariable String id,
+            @RequestParam(required = false) String action,
+            HttpSession session,
+            RedirectAttributes redirectAttributes) {
         ResumeDocument resume = getOrCreateResume(session);
         if (resume == null || resume.getId() == null) {
             return "redirect:/";
@@ -463,9 +477,16 @@ public class ResumeBuilderController {
 
         try {
             workExperienceRepository.deleteByIdAndResumeId(id, resume.getId());
-            return "redirect:/builder/experience?success=deleted";
+            redirectAttributes.addFlashAttribute("success", "Work experience deleted successfully!");
+            
+            // Handle redirection based on the action
+            if (action != null && action.equals("deleteAndAddAnother")) {
+                return "redirect:/builder/experience/add";
+            }
+            return "redirect:/builder/experience/list";
         } catch (Exception e) {
             log.error("Error deleting work experience", e);
+            redirectAttributes.addFlashAttribute("error", "Error deleting work experience: " + e.getMessage());
             return "redirect:/builder/experience?error=delete_failed";
         }
     }

@@ -8,8 +8,11 @@ import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.ArrayList;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 @Data
@@ -27,11 +30,13 @@ public class WorkExperience {
     private String role;
 
     @NotNull(message = "Start date is required")
+    @DateTimeFormat(pattern = "yyyy-MM")
     @JsonProperty("start_date")
-    private String startDate;
+    private Date startDate;
 
     @JsonProperty("end_date")
-    private String endDate;
+    @DateTimeFormat(pattern = "yyyy-MM")
+    private Date endDate;
 
     @Field("description")
     private List<String> description = new ArrayList<>();
@@ -39,13 +44,4 @@ public class WorkExperience {
     @Field("resume_id")
     private String resumeId;
 
-    public boolean isCurrent() {
-        return endDate == null || endDate.trim().isEmpty() || "Present".equalsIgnoreCase(endDate);
-    }
-
-    public String getFormattedDateRange() {
-        if (startDate == null) return "";
-        String end = isCurrent() ? "Present" : endDate;
-        return startDate + " - " + end;
-    }
 }
