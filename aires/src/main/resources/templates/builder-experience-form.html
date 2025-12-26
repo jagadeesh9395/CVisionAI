@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${workExperience.id != null} ? 'Edit Experience - CVisionAI' : 'Add Experience - CVisionAI'">Add Experience - CVisionAI</title>
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+    <link rel="stylesheet" href="../static/css/main.css">
+    <style>
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: #1e293b;
+            font-size: 0.875rem;
+        }
+        .form-control {
+            width: 100%;
+            padding: 0.625rem 0.875rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.5rem;
+            font-size: 0.9375rem;
+            transition: all 0.2s;
+            background-color: #fff;
+        }
+        .form-control:focus {
+            border-color: #4f46e5;
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+            outline: none;
+        }
+        .has-error .form-control {
+            border-color: #ef4444;
+        }
+        .text-danger {
+            color: #ef4444;
+            font-size: 0.75rem;
+            margin-top: 0.25rem;
+            display: block;
+        }
+        .btn {
+            padding: 0.625rem 1.25rem;
+            border-radius: 0.5rem;
+            font-weight: 500;
+            font-size: 0.9375rem;
+            transition: all 0.2s;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        .btn-primary {
+            background-color: #4f46e5;
+            color: white;
+            border: none;
+        }
+        .btn-primary:hover {
+            background-color: #4338ca;
+        }
+        .btn-outline {
+            background-color: transparent;
+            border: 1px solid #e2e8f0;
+            color: #475569;
+        }
+        .btn-outline:hover {
+            background-color: #f8fafc;
+            border-color: #cbd5e1;
+        }
+        .btn-danger {
+            background-color: #ef4444;
+            color: white;
+            border: none;
+        }
+        .btn-danger:hover {
+            background-color: #dc2626;
+        }
+        background-color: #4338ca;
+    }
+    </style>
+</head>
+<body>
+<div class="builder-layout">
+    <aside class="sidebar">
+        <div class="logo" style="font-size: 1.5rem; font-weight: 800; margin-bottom: 2rem;">CVisionAI</div>
+        <ul class="progress-list">
+            <li class="progress-item completed"><span class="progress-dot">✓</span><span>Upload</span></li>
+            <li class="progress-item completed"><span class="progress-dot">✓</span><span>Basics</span></li>
+            <li class="progress-item active"><span class="progress-dot">3</span><span>Experience</span></li>
+            <li class="progress-item"><span class="progress-dot">4</span><span>Education</span></li>
+            <li class="progress-item"><span class="progress-dot">5</span><span>Skills</span></li>
+            <li class="progress-item"><span class="progress-dot">6</span><span>Summary</span></li>
+            <li class="progress-item"><span class="progress-dot">7</span><span>Finalize</span></li>
+        </ul>
+        <div style="margin-top: auto; padding: 1rem; background: #334155; border-radius: 0.5rem; display: flex; align-items: center; gap: 1rem;">
+            <div style="position: relative; width: 40px; height: 40px;">
+                <svg viewBox="0 0 36 36" style="transform: rotate(-90deg);">
+                    <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#475569" stroke-width="3"/>
+                    <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#10b981" stroke-width="3"
+                          stroke-dasharray="30, 100"/>
+                </svg>
+                <span style="position: absolute; top:50%; left:50%; transform: translate(-50%, -50%); font-size: 0.7rem; font-weight: bold;">30%</span>
+            </div>
+            <div style="font-size: 0.75rem;">Resume complete</div>
+        </div>
+    </aside>
+    <main class="builder-main">
+        <div class="d-flex justify-content-between align-items-center mb-5">
+            <div>
+                <h1 class="mb-1" th:text="${workExperience.id != null} ? 'Edit Experience' : 'Add Experience'">Add Experience</h1>
+                <p class="text-muted">Add your work experience to showcase your professional journey</p>
+            </div>
+        </div>
+        <form class="form-grid" th:action="@{/builder/experience/save}" th:object="${workExperience}" method="post">
+            <input type="hidden" th:field="*{id}">
+            <input type="hidden" th:field="*{resumeId}">
+
+            <div class="form-group">
+                <label for="company">Company Name *</label>
+                <input type="text" class="form-control" id="company" th:field="*{company}" required>
+                <div class="text-danger" th:if="${#fields.hasErrors('company')}" th:errors="*{company}"></div>
+            </div>
+
+            <div class="form-group">
+                <label for="role">Job Title *</label>
+                <input type="text" class="form-control" id="role" th:field="*{role}" required>
+                <div class="text-danger" th:if="${#fields.hasErrors('role')}" th:errors="*{role}"></div>
+            </div>
+
+            <div class="form-group">
+                <label>Employment Period *</label>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <input type="text" class="form-control" id="startDate"
+                               th:field="*{period.startDate}" 
+                               pattern="(0[1-9]|1[0-2])\/\d{4}"
+                               placeholder="MM/YYYY" 
+                               required>
+                        <small class="form-text text-muted">Format: MM/YYYY (e.g., 01/2023)</small>
+                        <div class="text-danger" th:if="${#fields.hasErrors('period.startDate')}"
+                             th:errors="*{period.startDate}"></div>
+                    </div>
+                    <div class="col-md-6">
+                        <input type="text" class="form-control" id="endDate"
+                               th:field="*{period.endDate}"
+                               pattern="(0[1-9]|1[0-2])\/\d{4}|[Pp]resent"
+                               placeholder="MM/YYYY or Present">
+                        <small class="form-text text-muted">Leave empty if current position</small>
+                        <div class="text-danger" th:if="${#fields.hasErrors('period.endDate')}"
+                             th:errors="*{period.endDate}"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="location">Location</label>
+                <input type="text" class="form-control" id="location" th:field="*{location}">
+            </div>
+
+            <div class="form-group">
+                <label>Responsibilities & Achievements</label>
+                <div id="descriptionContainer">
+                    <div class="d-flex mb-2" th:each="desc, iter : ${workExperience.description != null ? workExperience.description : T(java.util.Collections).emptyList()}">
+                        <input type="text" class="form-control me-2"
+                               th:name="description"
+                               th:value="${desc}"
+                               placeholder="Responsibility or achievement">
+                        <button type="button" class="btn btn-sm btn-outline-danger"
+                                onclick="removeDescription(this)">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </div>
+                </div>
+                <button type="button" class="btn btn-sm btn-outline-secondary mt-2"
+                        onclick="addDescription()">
+                    <i class="bi bi-plus-circle"></i> Add Responsibility
+                </button>
+            </div>
+
+            <!-- Form actions -->
+            <div class="form-actions mt-4 pt-3 border-top d-flex justify-content-between align-items-center">
+                <div>
+                    <a th:href="@{/builder/experience}" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-left me-1"></i> Back to List
+                    </a>
+                </div>
+                <div class="d-flex">
+                    <button type="submit" name="action" value="saveAndAddAnother"
+                            class="btn btn-outline-primary me-2">
+                        <i class="bi bi-plus-circle me-1"></i> Save & Add Another
+                    </button>
+                    <button type="submit" name="action" value="saveAndContinue"
+                            class="btn btn-primary">
+                        <i class="bi bi-save me-1"></i> Save & Continue
+                    </button>
+                </div>
+            </div>
+        </form>
+
+        <script>
+            // Add date format validation
+            document.getElementById('startDate')?.addEventListener('change', function(e) {
+                const pattern = /^(0[1-9]|1[0-2])\/(19|20)\d{2}$/;
+                if (!pattern.test(e.target.value)) {
+                    e.target.setCustomValidity('Please enter a valid date in MM/YYYY format');
+                } else {
+                    e.target.setCustomValidity('');
+                }
+            });
+
+            document.getElementById('endDate')?.addEventListener('change', function(e) {
+                const pattern = /^(0[1-9]|1[0-2])\/(19|20)\d{2}$|^[Pp]resent$/;
+                if (e.target.value && !pattern.test(e.target.value)) {
+                    e.target.setCustomValidity('Please enter a valid date in MM/YYYY format or "Present"');
+                } else {
+                    e.target.setCustomValidity('');
+                }
+            });
+
+            function addDescription() {
+                const container = document.getElementById('descriptionContainer');
+                const newInput = document.createElement('div');
+                newInput.className = 'd-flex mb-2';
+                newInput.innerHTML = `
+                    <input type="text" class="form-control me-2"
+                           name="description"
+                           placeholder="Responsibility or achievement">
+                    <button type="button" class="btn btn-sm btn-outline-danger"
+                            onclick="removeDescription(this)">
+                        <i class="bi bi-trash"></i>
+                    </button>
+                `;
+                container.appendChild(newInput);
+            }
+
+            function removeDescription(button) {
+                button.closest('.d-flex').remove();
+            }
+        </script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    </main>
+</div>

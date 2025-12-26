@@ -67,7 +67,14 @@
                     <a th:href="@{/builder/basics}" class="btn btn-outline" style="padding: 0.75rem 3rem;">Back</a>
                     <div style="position: relative;">
                          <svg width="40" height="20" viewBox="0 0 40 20" style="position: absolute; left: -50px; top: -10px;"><path d="M38 2C35 8 30 15 2 18" stroke="#94a3b8" stroke-width="2" fill="none" stroke-linecap="round" stroke-dasharray="4 4"/></svg>
-                         <a th:href="@{/builder/experience-list}" class="btn btn-primary" style="padding: 0.75rem 5rem;">Continue</a>
+                        <form th:action="@{/builder/experience/process}" method="post">
+                            <div class="text-center mt-4">
+                                <button type="submit" class="btn btn-primary">
+                                    Extract and Continue
+                                    <i class="bi bi-arrow-right ms-2"></i>
+                                </button>
+                            </div>
+                        </form>
                     </div>
                 </div>
             </div>

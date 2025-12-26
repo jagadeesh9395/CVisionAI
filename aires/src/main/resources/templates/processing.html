@@ -185,31 +185,47 @@
             });
             
             // Check processing status every 2 seconds
-            const checkStatus = setInterval(() => {
-                fetch(/*[[@{/builder/check-status}]]*/ '/builder/check-status')
+            const checkStatus = () => {
+                fetch('/builder/check-status')
                     .then(response => response.json())
                     .then(data => {
                         if (data.complete) {
-                            clearInterval(checkStatus);
-                            // Add a small delay before redirecting for better UX
-                            setTimeout(() => {
-                                window.location.href = /*[[@{/builder/greet}]]*/ '/builder/greet';
-                            }, 1000);
+                            clearInterval(statusInterval);
+                            if (data.error) {
+                                console.error('Processing error:', data.error);
+                                window.location.href = '/builder/upload-error';
+                            } else {
+                                // Add a small delay before redirecting for better UX
+                                setTimeout(() => {
+                                    window.location.href = '/builder/basics';
+                                }, 1000);
+                            }
                         }
                     })
                     .catch(error => {
                         console.error('Error checking status:', error);
-                        clearInterval(checkStatus);
-                        // Redirect to error page if there's an issue
-                        window.location.href = /*[[@{/builder/upload-error}]]*/ '/builder/upload-error';
+                        clearInterval(statusInterval);
+                        window.location.href = '/builder/upload-error';
                     });
-            }, 2000);
+            };
             
-            // Set a timeout in case something goes wrong (10 seconds)
-            setTimeout(() => {
-                clearInterval(checkStatus);
-                window.location.href = /*[[@{/builder/greet}]]*/ '/builder/greet';
-            }, 10000);
+            // Initial check
+            checkStatus();
+            
+            // Set up interval for subsequent checks
+            const statusInterval = setInterval(checkStatus, 2000);
+            
+            // Set a timeout in case something goes wrong (30 seconds)
+            const timeoutId = setTimeout(() => {
+                clearInterval(statusInterval);
+                window.location.href = '/builder/upload-error?reason=timeout';
+            }, 30000);
+            
+            // Clean up on page unload
+            window.addEventListener('beforeunload', () => {
+                clearInterval(statusInterval);
+                clearTimeout(timeoutId);
+            });
         });
     </script>
 </body>
