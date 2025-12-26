@@ -124,8 +124,9 @@
         <div style="margin-top: auto; padding: 1rem; background: #334155; border-radius: 0.5rem; display: flex; align-items: center; gap: 1rem;">
             <div style="position: relative; width: 40px; height: 40px;">
                 <svg viewBox="0 0 36 36" style="transform: rotate(-90deg);">
-                    <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#475569" stroke-width="3" />
-                    <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#10b981" stroke-width="3" stroke-dasharray="88, 100" />
+                    <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#475569" stroke-width="3"/>
+                    <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#10b981" stroke-width="3"
+                          stroke-dasharray="88, 100"/>
                 </svg>
                 <span style="position: absolute; top:50%; left:50%; transform: translate(-50%, -50%); font-size: 0.7rem; font-weight: bold;">88%</span>
             </div>
@@ -165,11 +166,12 @@
                         </div>
                     </div>
                     <div class="dropdown">
-                        <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi bi-three-dots-vertical"></i></button>
+                        <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false"><i
+                                class="bi bi-three-dots-vertical"></i></button>
                         <ul class="dropdown-menu dropdown-menu-end">
                             <li><a class="dropdown-item edit-education" th:href="@{'/builder/education/edit/' + ${edu.id}}"> <i class="bi bi-pencil"></i> Edit </a></li>
-                            <li><a class="dropdown-item delete-education" href="#" th:data-id="${edu.id}" th:data-name="${edu.degree}"> <i class="bi bi-trash"></i> Delete </a></li>
-                            <li><a class="dropdown-item get-suggestions" href="#" th:data-id="${edu.id}" th:data-name="${edu.degree}"> <i class="bi bi-magic"></i> Get Suggestions </a></li>
+                            <li><a class="dropdown-item delete-education" href="#" data-bs-toggle="modal" data-bs-target="#deleteModal" th:data-education-id="${edu.id}"
+                                   th:data-education-name="${edu.degree}" onclick="setDeleteAction(this)"> <i class="bi bi-trash"></i> Delete </a></li>
                         </ul>
                     </div>
                 </div>
@@ -181,6 +183,15 @@
                     </ul>
                 </div>
             </div>
+        </div>
+        <!-- Navigation Buttons -->
+        <div class="d-flex justify-content-between mt-5 pt-4 border-top">
+            <a th:href="@{/builder/experience}" class="btn btn-outline-primary">
+                <i class="bi bi-arrow-left me-2"></i> Back to Experience
+            </a>
+            <a th:href="@{/builder/skills}" class="btn btn-primary">
+                Continue to Skills <i class="bi bi-arrow-right ms-2"></i>
+            </a>
         </div>
     </main>
     <aside class="builder-preview">
@@ -206,7 +217,6 @@
         </div>
     </aside>
 </div>
-<!-- Delete Confirmation Modal -->
 <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
@@ -215,7 +225,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <p>Are you sure you want to delete <span id="educationToDelete"></span>? This action cannot be undone.</p>
+                <p>Are you sure you want to delete <strong id="educationToDelete">this education</strong>? This action cannot be undone.</p>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
@@ -227,137 +237,53 @@
         </div>
     </div>
 </div>
-<!-- Suggestions Modal -->
-<div class="modal fade" id="suggestionsModal" tabindex="-1" aria-labelledby="suggestionsModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="suggestionsModalLabel">AI Suggestions</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body" id="suggestionsContent">
-                <div class="text-center py-4">
-                    <div class="spinner-border text-primary" role="status">
-                        <span class="visually-hidden">Loading...</span>
-                    </div>
-                    <p class="mt-2">Getting suggestions...</p>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary" id="applySuggestionBtn" style="display: none;">Apply Suggestion</button>
-            </div>
-        </div>
-    </div>
-</div>
-<script th:inline="javascript">
-    document.addEventListener('DOMContentLoaded', function() {
-        // Format dates on page load
-        document.querySelectorAll('.education-date').forEach(element => {
-            const dateStr = element.getAttribute('data-date');
-            if (dateStr) {
-                const date = new Date(dateStr);
-                if (!isNaN(date)) {
-                    element.textContent = date.toLocaleDateString('en-US', {
-                        year: 'numeric',
-                        month: 'short'
-                    });
-                }
-            }
-        });
-    });
-    });
+
+    <script th:inline="javascript">
         document.addEventListener('DOMContentLoaded', function() {
-            // Handle delete confirmation
+            // Format dates on page load
+            document.querySelectorAll('.education-date').forEach(element => {
+                const dateStr = element.getAttribute('data-date');
+                if (dateStr) {
+                    const date = new Date(dateStr);
+                    if (!isNaN(date)) {
+                        element.textContent = date.toLocaleDateString('en-US', {
+                            year: 'numeric',
+                            month: 'short'
+                        });
+                    }
+                }
+            });
+        });
+
+        function setDeleteAction(button) {
+            const educationId = button.getAttribute('data-education-id');
+            const educationName = button.getAttribute('data-education-name');
+
+            document.getElementById('educationToDelete').textContent = educationName || 'this education';
+            document.getElementById('deleteEducationForm').action = `/builder/education/delete/${educationId}`;
+
+            // Initialize and show the modal
+            const deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
+            deleteModal.show();
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Handle delete confirmation when modal is shown
             const deleteModal = document.getElementById('deleteModal');
             if (deleteModal) {
                 deleteModal.addEventListener('show.bs.modal', function(event) {
                     const button = event.relatedTarget;
-                    const educationId = button.getAttribute('data-education-id');
-                    const educationName = button.getAttribute('data-education-name');
+                    if (button) {
+                        const educationId = button.getAttribute('data-education-id');
+                        const educationName = button.getAttribute('data-education-name');
 
-                    document.getElementById('educationToDelete').textContent = educationName || 'this education';
-                    document.getElementById('deleteEducationForm').action = `/builder/education/delete/${educationId}`;
-                });
-            }
-
-            // Handle suggestions
-            const suggestionsModal = document.getElementById('suggestionsModal');
-            if (suggestionsModal) {
-                suggestionsModal.addEventListener('show.bs.modal', async function(event) {
-                    const button = event.relatedTarget;
-                    const educationId = button.getAttribute('data-education-id');
-                    const suggestionsContent = document.getElementById('suggestionsContent');
-                    const applyBtn = document.getElementById('applySuggestionBtn');
-
-                    try {
-                        // Show loading state
-                        suggestionsContent.innerHTML = `
-                            <div class="text-center py-4">
-                                <div class="spinner-border text-primary" role="status">
-                                    <span class="visually-hidden">Loading...</span>
-                                </div>
-                                <p class="mt-2">Generating AI suggestions...</p>
-                            </div>`;
-
-                        // Fetch suggestions
-                        const response = await fetch(`/builder/education/suggestions/${educationId}`);
-                        if (!response.ok) throw new Error('Failed to fetch suggestions');
-
-                        const data = await response.json();
-
-                        // Display suggestions
-                        if (data.suggestions && data.suggestions.length > 0) {
-                            let html = '<h6 class="mb-3">Suggestions for improvement:</h6><ul class="list-group">';
-                            data.suggestions.forEach(suggestion => {
-                                html += `<li class="list-group-item">
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" value="" id="suggestion-${Math.random().toString(36).substr(2, 9)}">
-                                        <label class="form-check-label" for="suggestion-${Math.random().toString(36).substr(2, 9)}">
-                                            ${suggestion}
-                                        </label>
-                                    </div>
-                                </li>`;
-                            });
-                            html += '</ul>';
-                            suggestionsContent.innerHTML = html;
-                            applyBtn.style.display = 'block';
-                        } else {
-                            suggestionsContent.innerHTML = '<div class="alert alert-info">No specific suggestions available at this time.</div>';
-                            applyBtn.style.display = 'none';
-                        }
-                    } catch (error) {
-                        console.error('Error fetching suggestions:', error);
-                        suggestionsContent.innerHTML = `
-                            <div class="alert alert-danger">
-                                <i class="bi bi-exclamation-triangle me-2"></i>
-                                Failed to load suggestions. Please try again later.
-                            </div>`;
-                        applyBtn.style.display = 'none';
+                        document.getElementById('educationToDelete').textContent = educationName || 'this education';
+                        document.getElementById('deleteEducationForm').action = `/builder/education/delete/${educationId}`;
                     }
-                });
-            }
-
-            // Handle apply suggestions
-            const applySuggestionBtn = document.getElementById('applySuggestionBtn');
-            if (applySuggestionBtn) {
-                applySuggestionBtn.addEventListener('click', function() {
-                    // Implement logic to apply selected suggestions
-                    const selectedSuggestions = [];
-                    document.querySelectorAll('#suggestionsContent input[type="checkbox"]:checked').forEach(checkbox => {
-                        selectedSuggestions.push(checkbox.nextElementSibling.textContent.trim());
                     });
+                }
 
-                    if (selectedSuggestions.length > 0) {
-                        // Here you would typically make an API call to apply these suggestions
-                        console.log('Applying suggestions:', selectedSuggestions);
-                        alert('Suggestions applied successfully!');
-                        const modal = bootstrap.Modal.getInstance(suggestionsModal);
-                        modal.hide();
-                    } else {
-                        alert('Please select at least one suggestion to apply.');
-                    }
-                });
-            }
+                // Suggestions functionality has been removed
+            });
         });
-</script>
+    </script>

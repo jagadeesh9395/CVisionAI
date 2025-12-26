@@ -101,6 +101,7 @@ public class ResumeBuilderController {
                     // Save the resume with extracted data
                     resume.updateTimestamps();
                     resume = resumeRepository.save(resume);
+                    session.setAttribute("resumeId", resume.getId());  // Add this line
 
                     // Store in session
                     session.setAttribute("resumeData", resume);
@@ -144,10 +145,16 @@ public class ResumeBuilderController {
         boolean isComplete = session.getAttribute("processingComplete") != null;
         response.put("complete", isComplete);
 
+        // Add processing status
+        response.put("processing", session.getAttribute("uploadedFile") != null);
+
         if (isComplete) {
             String error = (String) session.getAttribute("processingError");
             if (error != null) {
                 response.put("error", error);
+            } else {
+                // Add success status
+                response.put("resumeId", session.getAttribute("resumeId"));
             }
         }
 

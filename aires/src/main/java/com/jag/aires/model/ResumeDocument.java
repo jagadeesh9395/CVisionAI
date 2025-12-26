@@ -24,12 +24,16 @@ public class ResumeDocument {
     
     private String objective;
     private List<String> professionalSummary;
+    @DBRef
+    @Field("skills")
     private Skills skills;
     
     @DBRef
     @Field("work_experience")
     private List<WorkExperience> workExperience;
-    
+
+    @DBRef
+    @Field("education")
     private List<Education> education;
     private List<Project> projects;
     private List<Achievement> achievements;

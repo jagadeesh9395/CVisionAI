@@ -2,10 +2,21 @@ package com.jag.aires.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
+
 import java.util.List;
 
 @Data
+@Document(collection = "skills")
 public class Skills {
+    @Id
+    private String id;
+
+    @Field("resume_id")
+    private String resumeId;
+
     @JsonProperty("java_technologies")
     private List<String> javaTechnologies;
 
@@ -33,4 +44,5 @@ public class Skills {
     private List<String> designPatterns;
 
     private List<String> ide;
+
 }
