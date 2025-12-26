@@ -117,6 +117,142 @@
         .remove-achievement:hover {
             background-color: #fef2f2;
         }
+    /* Modern Button Styles */
+    .btn-modern {
+        padding: 0.75rem 1.5rem;
+        border-radius: 0.75rem;
+        font-weight: 600;
+        letter-spacing: 0.01em;
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        border: none;
+        cursor: pointer;
+        text-decoration: none;
+    }
+    
+    .btn-modern-primary {
+        background: linear-gradient(135deg, #4f46e5 0%, #4338ca 100%);
+        color: white;
+        box-shadow: 0 4px 6px -1px rgba(79, 70, 229, 0.2), 0 2px 4px -1px rgba(79, 70, 229, 0.1);
+    }
+    
+    .btn-modern-primary:hover {
+        box-shadow: 0 10px 15px -3px rgba(79, 70, 229, 0.3);
+        transform: translateY(-1px);
+        color: white;
+    }
+
+    .btn-modern-secondary {
+        background: white;
+        border: 1px solid #e2e8f0;
+        color: #475569;
+    }
+
+    .btn-modern-secondary:hover {
+        background: #f8fafc;
+        border-color: #cbd5e1;
+        color: #1e293b;
+    }
+
+    .btn-modern-outline {
+        background: transparent;
+        border: 1px solid #4f46e5;
+        color: #4f46e5;
+        text-decoration: none;
+    }
+    
+    .btn-modern-outline:hover {
+        background: #eef2ff;
+    }
+
+    .btn-icon-modern {
+         display: inline-flex;
+         align-items: center;
+         justify-content: center;
+         width: 36px;
+         height: 36px;
+         border-radius: 50%;
+         transition: all 0.2s;
+         border: 1px solid transparent;
+    }
+    .btn-icon-modern:hover {
+         background-color: #f1f5f9;
+         transform: translateY(-1px);
+    }
+    .btn-icon-modern-danger:hover {
+         background-color: #fef2f2;
+         color: #ef4444;
+         border-color: #fecaca;
+    }
+
+    /* AI Suggestion Styles */
+    .ai-suggestions-panel {
+        border: 1px solid #e2e8f0;
+        border-radius: 0.75rem;
+        background: #f8fafc;
+        padding: 1rem;
+        margin-top: 1rem;
+        display: none;
+        animation: fadeIn 0.3s ease-out;
+    }
+    
+    .ai-suggestions-panel.active {
+        display: block;
+    }
+
+    .suggestion-chip {
+        display: block;
+        width: 100%;
+        text-align: left;
+        padding: 0.75rem;
+        margin-bottom: 0.5rem;
+        background: white;
+        border: 1px solid #e2e8f0;
+        border-radius: 0.5rem;
+        color: #334155;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+    .suggestion-chip:hover {
+        border-color: #4f46e5;
+        background: #eef2ff;
+        color: #4338ca;
+    }
+
+    .suggestion-chip i {
+        color: #4f46e5;
+        margin-right: 0.5rem;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(-10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .ai-btn-glow {
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .ai-btn-glow::after {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: linear-gradient(45deg, transparent, rgba(255,255,255,0.3), transparent);
+        transform: rotate(45deg);
+        animation: shimmer 3s infinite;
+    }
+
+    @keyframes shimmer {
+        0% { transform: translateX(-100%) rotate(45deg); }
+        100% { transform: translateX(100%) rotate(45deg); }
+    }
     </style>
 </head>
 <body>
@@ -234,8 +370,8 @@
                         <div class="input-group">
                             <input type="text" class="form-control" id="endDate" 
                                    th:field="*{period.endDate}"
-                                   pattern="(0[1-9]|1[0-2])\/\d{4}"
-                                   placeholder="MM/YYYY"
+                                   pattern="(0[1-9]|1[0-2])\/\d{4}|[Pp]resent"
+                                   placeholder="MM/YYYY or Present"
                                    th:disabled="${education.isCurrent}"
                                    th:class="${#fields.hasErrors('period.endDate')} ? 'is-invalid' : ''">
                             <div class="input-group-append">
@@ -245,7 +381,7 @@
                                     <label class="form-check-label ms-2" for="isCurrent">Currently Studying</label>
                                 </div>
                             </div>
-                            <small class="form-text text-muted w-100">Leave empty if currently studying</small>
+                            <small class="form-text text-muted w-100">Enter end date or "Present" if currently studying</small>
                             <div class="invalid-feedback" th:if="${#fields.hasErrors('period.endDate')}" 
                                  th:errors="*{period.endDate}"></div>
                         </div>
@@ -280,19 +416,19 @@
                 </button>
             </div>
 
-            <div class="d-flex justify-content-between mt-5">
-                <a th:href="@{/builder/education-list}" class="btn btn-outline">
-                    <i class="bi bi-arrow-left me-2"></i> Cancel
-                </a>
-                <div>
-                    <button type="submit" name="action" value="save" class="btn btn-primary me-2">
-                        <i class="bi bi-save me-2"></i>Save
-                    </button>
-                    <button type="submit" name="action" value="saveAndAdd" class="btn btn-outline-primary">
-                        <i class="bi bi-plus-circle me-2"></i>Save & Add Another
-                    </button>
+                <div class="d-flex justify-content-between align-items-center mt-5">
+                    <a th:href="@{/builder/education-list}" class="btn-modern btn-modern-secondary text-decoration-none">
+                        Back to List
+                    </a>
+                    <div class="d-flex gap-2">
+                         <button type="submit" name="action" value="save" class="btn-modern btn-modern-secondary">
+                            Save & Add Another
+                        </button>
+                        <button type="submit" name="action" value="continue" class="btn-modern btn-modern-primary">
+                            Save & Continue
+                        </button>
+                    </div>
                 </div>
-            </div>
         </form>
     </main>
 
@@ -514,9 +650,9 @@
     });
 
     document.getElementById('endDate')?.addEventListener('change', function(e) {
-        const pattern = /^(0[1-9]|1[0-2])\/(19|20)\d{2}$|^$/;
+        const pattern = /^(0[1-9]|1[0-2])\/(19|20)\d{2}$|^[Pp]resent$|^$/;
         if (e.target.value && !pattern.test(e.target.value)) {
-            e.target.setCustomValidity('Please enter a valid date in MM/YYYY format or leave empty for current');
+            e.target.setCustomValidity('Please enter a valid date in MM/YYYY format, "Present", or leave empty');
         } else {
             e.target.setCustomValidity('');
         }
@@ -562,6 +698,10 @@
         // Format dates for display when editing
         function formatDateForInput(dateString) {
             if (!dateString) return '';
+            // If the date is already in MM/YYYY format or 'Present', return as is
+            if (dateString.match(/^(0[1-9]|1[0-2])\/(19|20)\d{2}$/) || dateString.toLowerCase() === 'present') {
+                return dateString;
+            }
             // Convert from YYYY-MM to MM/YYYY for display
             const [year, month] = dateString.split('-');
             return `${month}/${year}`;

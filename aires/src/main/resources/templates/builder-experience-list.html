@@ -364,12 +364,12 @@
                     Add your work history to showcase your professional journey
                 </p>
             </div>
-            <div class="d-flex gap-2">
-                <button type="button" class="btn-modern btn-modern-outline" onclick="togglePreview()" th:if="${!#lists.isEmpty(experiences)}">
-                    <i class="bi bi-eye me-1"></i> Preview Section
+            <div class="d-flex gap-3 align-items-center">
+                <button type="button" class="btn btn-outline-secondary px-3 py-2 d-flex align-items-center" onclick="togglePreview()" th:if="${!#lists.isEmpty(experiences)}">
+                    <i class="bi bi-eye me-2"></i> Preview Section
                 </button>
-                <a th:href="@{/builder/experience/add}" class="btn-modern btn-modern-primary">
-                    <i class="bi bi-plus-lg me-1"></i> Add Experience
+                <a th:href="@{/builder/experience/add}" class="btn btn-primary px-4 py-2 d-flex align-items-center">
+                    <i class="bi bi-plus-lg me-2"></i> Add Experience
                 </a>
             </div>
         </div>
@@ -461,13 +461,14 @@
          </span>
                         </div>
                     </div>
-                    <div class="d-flex gap-1">
+                    <div class="d-flex gap-2">
                         <a
                                 th:href="@{/builder/experience/edit/{id}(id=${exp.id})}"
-                                class="btn-icon-modern text-secondary"
+                                class="btn-icon-modern text-primary"
                                 data-bs-toggle="tooltip"
                                 data-bs-placement="top"
-                                title="Edit"
+                                title="Edit this experience"
+                                style="width: 36px; height: 36px; display: inline-flex; align-items: center; justify-content: center;"
                         >
                             <i class="bi bi-pencil"></i>
                         </a>
@@ -479,10 +480,11 @@
                         >
                             <button
                                     type="submit"
-                                    class="btn-icon-modern btn-icon-modern-danger text-secondary"
+                                    class="btn-icon-modern text-danger"
                                     data-bs-toggle="tooltip"
                                     data-bs-placement="top"
-                                    title="Delete"
+                                    title="Delete this experience"
+                                    style="width: 36px; height: 36px; display: inline-flex; align-items: center; justify-content: center;"
                             >
                                 <i class="bi bi-trash"></i>
                             </button>
@@ -507,12 +509,12 @@
             </div>
         </div>
 
-        <div class="d-flex justify-content-between mt-5 mb-5 align-items-center">
-            <a th:href="@{/builder/basics}" class="btn-modern btn-modern-secondary text-decoration-none">
-                <i class="bi bi-arrow-left me-1"></i> Back to Basics
+        <div class="d-flex justify-content-between mt-5 mb-5 align-items-center border-top pt-4">
+            <a th:href="@{/builder/basics}" class="btn btn-outline-secondary px-4 py-2 d-inline-flex align-items-center">
+                <i class="bi bi-arrow-left me-2"></i> Back to Basics
             </a>
-            <a th:href="@{/builder/education}" class="btn-modern btn-modern-primary text-decoration-none">
-                Continue to Education <i class="bi bi-arrow-right ms-1"></i>
+            <a th:href="@{/builder/education}" class="btn btn-primary px-4 py-2 d-inline-flex align-items-center">
+                Continue to Education <i class="bi bi-arrow-right ms-2"></i>
             </a>
         </div>
     </main>

@@ -406,33 +406,33 @@
                         </button>
                     </div>
                 </div>
-                        <button type="button" class="btn btn-sm btn-outline-danger"
-                                onclick="removeDescription(this)">
-                            <i class="bi bi-trash"></i>
-                        </button>
-                    </div>
-                </div>
-                <button type="button" class="btn-modern btn-modern-secondary mt-2"
+                <button type="button" class="btn btn-outline-primary px-3 py-2 d-inline-flex align-items-center mt-2"
                         onclick="addDescription()">
-                    <i class="bi bi-plus-circle"></i> Add Responsibility
+                    <i class="bi bi-plus-circle me-2"></i> Add Responsibility
                 </button>
             </div>
 
-            <div class="form-actions mt-5 pt-4 border-top d-flex justify-content-between align-items-center">
-                <div>
-                    <a th:href="@{/builder/experience/list}" class="btn-modern btn-modern-secondary">
-                        <i class="bi bi-arrow-left"></i> Back to List
-                    </a>
-                </div>
-                <div class="d-flex gap-3">
-                    <button type="submit" name="action" value="saveAndAddAnother"
-                            class="btn-modern btn-modern-outline">
-                        <i class="bi bi-plus-circle"></i> Save & Add Another
-                    </button>
-                    <button type="submit" name="action" value="saveAndContinue"
-                            class="btn-modern btn-modern-primary">
-                        <i class="bi bi-check-lg"></i> Save & Continue
-                    </button>
+            <div class="form-actions mt-5 pt-4 border-top">
+                <div class="container-fluid px-0">
+                    <div class="row g-3 align-items-center">
+                        <div class="col-md-4">
+                            <a th:href="@{/builder/experience/list}" class="btn btn-outline-secondary w-100 py-2 d-inline-flex align-items-center justify-content-center">
+                                <i class="bi bi-arrow-left me-2"></i> Back to List
+                            </a>
+                        </div>
+                        <div class="col-md-8">
+                            <div class="d-flex justify-content-end gap-3">
+                                <button type="submit" name="action" value="saveAndAddAnother"
+                                        class="btn btn-outline-primary px-4 py-2 d-inline-flex align-items-center">
+                                    <i class="bi bi-plus-circle me-2"></i> Save & Add Another
+                                </button>
+                                <button type="submit" name="action" value="saveAndContinue"
+                                        class="btn btn-primary px-4 py-2 d-inline-flex align-items-center">
+                                    <i class="bi bi-check-lg me-2"></i> Save & Continue
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </form>
