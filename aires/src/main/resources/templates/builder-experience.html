@@ -6,6 +6,46 @@
     <title>Review Experience - CVisionAI</title>
     <link rel="stylesheet" th:href="@{/css/main.css}">
     <link rel="stylesheet" href="../static/css/main.css">
+<style>
+/* Modern Button Styles (Shared) */
+.btn-modern {
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.btn-modern-primary {
+    background: linear-gradient(135deg, #4f46e5 0%, #4338ca 100%);
+    color: white;
+    box-shadow: 0 4px 6px -1px rgba(79, 70, 229, 0.2), 0 2px 4px -1px rgba(79, 70, 229, 0.1);
+}
+
+.btn-modern-primary:hover {
+    box-shadow: 0 10px 15px -3px rgba(79, 70, 229, 0.3);
+    transform: translateY(-1px);
+    color: white;
+}
+
+.btn-modern-outline-secondary {
+    background: transparent;
+    border: 1px solid #e2e8f0;
+    color: #475569;
+}
+
+.btn-modern-outline-secondary:hover {
+    background: #f8fafc;
+    border-color: #cbd5e1;
+    color: #1e293b;
+}
+</style>
 </head>
 <body>
     <div class="builder-layout">
@@ -33,11 +73,23 @@
                     <span>Skills</span>
                 </li>
                 <li class="progress-item">
-                    <span class="progress-dot">5</span>
+                    <span class="progress-dot">6</span>
                     <span>Summary</span>
                 </li>
                 <li class="progress-item">
-                    <span class="progress-dot">6</span>
+                    <span class="progress-dot">7</span>
+                    <span>Projects</span>
+                </li>
+                <li class="progress-item">
+                    <span class="progress-dot">8</span>
+                    <span>Certificates</span>
+                </li>
+                <li class="progress-item">
+                    <span class="progress-dot">9</span>
+                    <span>Achievements</span>
+                </li>
+                <li class="progress-item">
+                    <span class="progress-dot">10</span>
                     <span>Finalize</span>
                 </li>
             </ul>
@@ -64,12 +116,12 @@
                 </div>
 
                 <div class="full-width" style="display: flex; justify-content: space-between; align-items: center; margin-top: 4rem;">
-                    <a th:href="@{/builder/basics}" class="btn btn-outline" style="padding: 0.75rem 3rem;">Back</a>
+                    <a th:href="@{/builder/basics}" class="btn-modern btn-modern-outline-secondary" style="padding: 0.75rem 3rem;">Back</a>
                     <div style="position: relative;">
                          <svg width="40" height="20" viewBox="0 0 40 20" style="position: absolute; left: -50px; top: -10px;"><path d="M38 2C35 8 30 15 2 18" stroke="#94a3b8" stroke-width="2" fill="none" stroke-linecap="round" stroke-dasharray="4 4"/></svg>
                         <form th:action="@{/builder/experience/process}" method="post">
                             <div class="text-center mt-4">
-                                <button type="submit" class="btn btn-primary">
+                                <button type="submit" class="btn-modern btn-modern-primary">
                                     Extract and Continue
                                     <i class="bi bi-arrow-right ms-2"></i>
                                 </button>

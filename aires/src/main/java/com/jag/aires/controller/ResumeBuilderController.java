@@ -223,8 +223,7 @@ public class ResumeBuilderController {
             redirectAttributes.addFlashAttribute(
                     "error",
                     "Failed to save personal information: " +
-                            (e.getMessage() != null ? e.getMessage() : "Unknown error")
-            );
+                            (e.getMessage() != null ? e.getMessage() : "Unknown error"));
             return "redirect:/builder/basics";
         }
     }
@@ -337,7 +336,8 @@ public class ResumeBuilderController {
         }
     }
 
-    // Removed duplicate saveBasics method - consolidated with the one that has validation and error handling
+    // Removed duplicate saveBasics method - consolidated with the one that has
+    // validation and error handling
 
     @GetMapping("/experience")
     public String showExperience(HttpSession session, Model model) {
@@ -424,12 +424,27 @@ public class ResumeBuilderController {
                 return "redirect:/";
             }
 
+            // Ensure resume is saved and has an ID
+            if (resume.getId() == null) {
+                resume.updateTimestamps();
+                resume = resumeRepository.save(resume);
+                session.setAttribute("resumeData", resume);
+            }
+
+            // Handle empty strings from form submission
+            if (workExperience.getId() != null && workExperience.getId().trim().isEmpty()) {
+                workExperience.setId(null);
+            }
+            if (workExperience.getResumeId() != null && workExperience.getResumeId().trim().isEmpty()) {
+                workExperience.setResumeId(null); // Will be set below
+            }
+
             // Ensure period is properly set
             if (workExperience.getPeriod() == null) {
                 workExperience.setPeriod(new ExperiencePeriod());
             }
 
-            // Set resume ID if it's a new experience
+            // Set resume ID
             if (workExperience.getResumeId() == null) {
                 workExperience.setResumeId(resume.getId());
             }
@@ -627,26 +642,27 @@ public class ResumeBuilderController {
         return "builder-education";
     }
 
-//    @GetMapping("/education-list")
-//    public String showEducationList(HttpSession session, Model model) {
-//        try {
-//            ResumeDocument resume = getOrCreateResume(session);
-//            if (resume == null) {
-//                return "redirect:/";
-//            }
-//
-//            List<Education> educations = educationRepository.findByResumeId(resume.getId());
-//            if (educations == null) {
-//                educations = new ArrayList<>();
-//            }
-//
-//            model.addAttribute("educations", educations);
-//            return "builder-education-list";
-//        } catch (Exception e) {
-//            log.error("Error loading education list", e);
-//            return "redirect:/builder/error";
-//        }
-//    }
+    // @GetMapping("/education-list")
+    // public String showEducationList(HttpSession session, Model model) {
+    // try {
+    // ResumeDocument resume = getOrCreateResume(session);
+    // if (resume == null) {
+    // return "redirect:/";
+    // }
+    //
+    // List<Education> educations =
+    // educationRepository.findByResumeId(resume.getId());
+    // if (educations == null) {
+    // educations = new ArrayList<>();
+    // }
+    //
+    // model.addAttribute("educations", educations);
+    // return "builder-education-list";
+    // } catch (Exception e) {
+    // log.error("Error loading education list", e);
+    // return "redirect:/builder/error";
+    // }
+    // }
 
     @GetMapping("/education/add")
     public String showAddEducationForm(Model model) {
@@ -668,8 +684,19 @@ public class ResumeBuilderController {
 
         try {
             ResumeDocument resume = getOrCreateResume(session);
-            if (resume == null || resume.getId() == null) {
+            if (resume == null) {
                 return "redirect:/";
+            }
+
+            if (resume.getId() == null) {
+                resume.updateTimestamps();
+                resume = resumeRepository.save(resume);
+                session.setAttribute("resumeData", resume);
+            }
+
+            // Handle empty strings from form submission
+            if (education.getId() != null && education.getId().trim().isEmpty()) {
+                education.setId(null);
             }
 
             education.setResumeId(resume.getId());
@@ -814,18 +841,21 @@ public class ResumeBuilderController {
                         education.setResumeId(resume.getId());
                         educationRepository.save(education);
                     }
-                    redirectAttributes.addFlashAttribute("successMessage", "Education information processed successfully");
+                    redirectAttributes.addFlashAttribute("successMessage",
+                            "Education information processed successfully");
                 } else {
                     redirectAttributes.addFlashAttribute("infoMessage", "No education information found to process");
                 }
             } else {
-                redirectAttributes.addFlashAttribute("infoMessage", "No education section found in the uploaded document");
+                redirectAttributes.addFlashAttribute("infoMessage",
+                        "No education section found in the uploaded document");
             }
 
             return "redirect:/builder/education-list";
         } catch (Exception e) {
             log.error("Error processing education information", e);
-            redirectAttributes.addFlashAttribute("errorMessage", "Error processing education information: " + e.getMessage());
+            redirectAttributes.addFlashAttribute("errorMessage",
+                    "Error processing education information: " + e.getMessage());
             return "redirect:/builder/education";
         }
     }

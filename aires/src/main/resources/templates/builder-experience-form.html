@@ -78,7 +78,215 @@
             background-color: #dc2626;
         }
         background-color: #4338ca;
-    }
+        }
+
+        /* Preview Drawer Styles */
+        .preview-drawer {
+            position: fixed;
+            top: 0;
+            right: -500px;
+            width: 500px;
+            height: 100vh;
+            background: white;
+            box-shadow: -5px 0 25px rgba(0,0,0,0.1);
+            transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 1050;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .preview-drawer.active {
+            right: 0;
+        }
+
+        .preview-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #f8fafc;
+        }
+
+        .preview-body {
+            flex: 1;
+            padding: 2rem;
+            overflow-y: auto;
+            background: #ffffff;
+        }
+
+        .preview-content {
+            border: 1px dashed #cbd5e1;
+            padding: 2rem;
+            border-radius: 0.5rem;
+            background: #fff;
+        }
+
+        .preview-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.3);
+            z-index: 1040;
+            display: none;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .preview-overlay.active {
+            display: block;
+            opacity: 1;
+        }
+
+        /* Resume Preview specific styles */
+        .resume-preview-role {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 0.25rem;
+        }
+        .resume-preview-company {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #334155;
+            margin-bottom: 0.25rem;
+        }
+        .resume-preview-meta {
+            font-size: 0.875rem;
+            color: #64748b;
+            margin-bottom: 1rem;
+            font-style: italic;
+        }
+        .resume-preview-desc {
+            font-size: 0.9rem;
+            color: #334155;
+        }
+        .resume-preview-desc ul {
+            padding-left: 1.25rem;
+            margin-bottom: 0;
+        }
+        .resume-preview-desc li {
+            margin-bottom: 0.25rem;
+        }
+    </style>
+    <style>
+        /* Modern Button Styles */
+        .btn-modern {
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.01em;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            border: none;
+            cursor: pointer;
+        }
+        
+        .btn-modern-primary {
+            background: linear-gradient(135deg, #4f46e5 0%, #4338ca 100%);
+            color: white;
+            box-shadow: 0 4px 6px -1px rgba(79, 70, 229, 0.2), 0 2px 4px -1px rgba(79, 70, 229, 0.1);
+        }
+        
+        .btn-modern-primary:hover {
+            box-shadow: 0 10px 15px -3px rgba(79, 70, 229, 0.3);
+            transform: translateY(-1px);
+            color: white;
+        }
+
+        .btn-modern-secondary {
+            background: white;
+            border: 1px solid #e2e8f0;
+            color: #475569;
+        }
+
+        .btn-modern-secondary:hover {
+            background: #f8fafc;
+            border-color: #cbd5e1;
+            color: #1e293b;
+        }
+
+        .btn-modern-outline {
+            background: transparent;
+            border: 1px solid #4f46e5;
+            color: #4f46e5;
+            text-decoration: none;
+        }
+        
+        .btn-modern-outline:hover {
+            background: #eef2ff;
+        }
+
+        /* AI Suggestion Styles */
+        .ai-suggestions-panel {
+            border: 1px solid #e2e8f0;
+            border-radius: 0.75rem;
+            background: #f8fafc;
+            padding: 1rem;
+            margin-top: 1rem;
+            display: none;
+            animation: fadeIn 0.3s ease-out;
+        }
+        
+        .ai-suggestions-panel.active {
+            display: block;
+        }
+
+        .suggestion-chip {
+            display: block;
+            width: 100%;
+            text-align: left;
+            padding: 0.75rem;
+            margin-bottom: 0.5rem;
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.5rem;
+            color: #334155;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .suggestion-chip:hover {
+            border-color: #4f46e5;
+            background: #eef2ff;
+            color: #4338ca;
+        }
+
+        .suggestion-chip i {
+            color: #4f46e5;
+            margin-right: 0.5rem;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .ai-btn-glow {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .ai-btn-glow::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.3), transparent);
+            transform: rotate(45deg);
+            animation: shimmer 3s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) rotate(45deg); }
+        }
     </style>
 </head>
 <body>
@@ -92,7 +300,10 @@
             <li class="progress-item"><span class="progress-dot">4</span><span>Education</span></li>
             <li class="progress-item"><span class="progress-dot">5</span><span>Skills</span></li>
             <li class="progress-item"><span class="progress-dot">6</span><span>Summary</span></li>
-            <li class="progress-item"><span class="progress-dot">7</span><span>Finalize</span></li>
+            <li class="progress-item"><span class="progress-dot">7</span><span>Projects</span></li>
+            <li class="progress-item"><span class="progress-dot">8</span><span>Certificates</span></li>
+            <li class="progress-item"><span class="progress-dot">9</span><span>Achievements</span></li>
+            <li class="progress-item"><span class="progress-dot">10</span><span>Finalize</span></li>
         </ul>
         <div style="margin-top: auto; padding: 1rem; background: #334155; border-radius: 0.5rem; display: flex; align-items: center; gap: 1rem;">
             <div style="position: relative; width: 40px; height: 40px;">
@@ -112,6 +323,9 @@
                 <h1 class="mb-1" th:text="${workExperience.id != null} ? 'Edit Experience' : 'Add Experience'">Add Experience</h1>
                 <p class="text-muted">Add your work experience to showcase your professional journey</p>
             </div>
+            <button type="button" class="btn btn-outline-primary" onclick="togglePreview()" title="Live Preview">
+                <i class="bi bi-zoom-in me-2"></i> Preview
+            </button>
         </div>
         <form class="form-grid" th:action="@{/builder/experience/save}" th:object="${workExperience}" method="post">
             <input type="hidden" th:field="*{id}">
@@ -160,7 +374,26 @@
             </div>
 
             <div class="form-group">
-                <label>Responsibilities & Achievements</label>
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <label class="mb-0">Responsibilities & Achievements</label>
+                    <button type="button" class="btn-modern btn-modern-outline ai-btn-glow" onclick="fetchSuggestions()" style="padding: 0.4rem 0.8rem; font-size: 0.875rem;">
+                        <i class="bi bi-stars"></i> Get AI Suggestions
+                    </button>
+                </div>
+                
+                <div id="aiSuggestionsPanel" class="ai-suggestions-panel">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h6 class="mb-0 text-primary fw-bold"><i class="bi bi-robot me-2"></i>AI Suggestions</h6>
+                        <button type="button" class="btn-close small" onclick="closeSuggestions()"></button>
+                    </div>
+                    <div id="suggestionsList">
+                        <!-- Suggestions will appear here -->
+                        <div class="text-center text-muted py-2">
+                            <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                            Generating ideas based on your role...
+                        </div>
+                    </div>
+                </div>
                 <div id="descriptionContainer">
                     <div class="d-flex mb-2" th:each="desc, iter : ${workExperience.description != null ? workExperience.description : T(java.util.Collections).emptyList()}">
                         <input type="text" class="form-control me-2"
@@ -173,35 +406,72 @@
                         </button>
                     </div>
                 </div>
-                <button type="button" class="btn btn-sm btn-outline-secondary mt-2"
+                        <button type="button" class="btn btn-sm btn-outline-danger"
+                                onclick="removeDescription(this)">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </div>
+                </div>
+                <button type="button" class="btn-modern btn-modern-secondary mt-2"
                         onclick="addDescription()">
                     <i class="bi bi-plus-circle"></i> Add Responsibility
                 </button>
             </div>
 
-            <!-- Form actions -->
-            <div class="form-actions mt-4 pt-3 border-top d-flex justify-content-between align-items-center">
+            <div class="form-actions mt-5 pt-4 border-top d-flex justify-content-between align-items-center">
                 <div>
-                    <a th:href="@{/builder/experience}" class="btn btn-outline-secondary">
-                        <i class="bi bi-arrow-left me-1"></i> Back to List
+                    <a th:href="@{/builder/experience/list}" class="btn-modern btn-modern-secondary">
+                        <i class="bi bi-arrow-left"></i> Back to List
                     </a>
                 </div>
-                <div class="d-flex">
+                <div class="d-flex gap-3">
                     <button type="submit" name="action" value="saveAndAddAnother"
-                            class="btn btn-outline-primary me-2">
-                        <i class="bi bi-plus-circle me-1"></i> Save & Add Another
+                            class="btn-modern btn-modern-outline">
+                        <i class="bi bi-plus-circle"></i> Save & Add Another
                     </button>
                     <button type="submit" name="action" value="saveAndContinue"
-                            class="btn btn-primary">
-                        <i class="bi bi-save me-1"></i> Save & Continue
+                            class="btn-modern btn-modern-primary">
+                        <i class="bi bi-check-lg"></i> Save & Continue
                     </button>
                 </div>
             </div>
         </form>
 
+        <!-- Preview Overlay -->
+        <div class="preview-overlay" id="previewOverlay" onclick="togglePreview()"></div>
+
+        <!-- Preview Drawer -->
+        <div class="preview-drawer" id="previewDrawer">
+            <div class="preview-header">
+                <h5 class="mb-0 fw-bold text-dark">Live Preview</h5>
+                <button type="button" class="btn-close" onclick="togglePreview()"></button>
+            </div>
+            <div class="preview-body">
+                <div class="alert alert-info py-2 small mb-3">
+                    <i class="bi bi-info-circle me-1"></i> This is how this entry will appear on your resume.
+                </div>
+                <div class="preview-content">
+                    <div id="previewRole" class="resume-preview-role">Role Title</div>
+                    <div id="previewCompany" class="resume-preview-company">Company Name</div>
+                    <div class="resume-preview-meta">
+                        <span id="previewDate">Start Date - End Date</span> 
+                        <span id="previewLocationSeparator" style="display:none"> | </span>
+                        <span id="previewLocation">Location</span>
+                    </div>
+                    <div class="resume-preview-desc">
+                        <ul id="previewDescription">
+                            <li>Responsibility 1</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <script>
             // Add date format validation
+            document.getElementById('startDate')?.addEventListener('input', updatePreview);
             document.getElementById('startDate')?.addEventListener('change', function(e) {
+                updatePreview();
                 const pattern = /^(0[1-9]|1[0-2])\/(19|20)\d{2}$/;
                 if (!pattern.test(e.target.value)) {
                     e.target.setCustomValidity('Please enter a valid date in MM/YYYY format');
@@ -237,7 +507,160 @@
 
             function removeDescription(button) {
                 button.closest('.d-flex').remove();
+                updatePreview();
             }
+
+            // Preview Logic
+            function togglePreview() {
+                const drawer = document.getElementById('previewDrawer');
+                const overlay = document.getElementById('previewOverlay');
+                drawer.classList.toggle('active');
+                overlay.classList.toggle('active');
+                if(drawer.classList.contains('active')) {
+                    updatePreview();
+                }
+            }
+
+            function updatePreview() {
+                // Get values
+                const company = document.getElementById('company').value || 'Company Name';
+                const role = document.getElementById('role').value || 'Role Title';
+                const startDate = document.getElementById('startDate').value || '';
+                const endDate = document.getElementById('endDate').value || '';
+                const location = document.getElementById('location').value || '';
+                
+                // Get descriptions
+                const descInputs = document.getElementsByName('description');
+                let descHtml = '';
+                if (descInputs.length > 0) {
+                    descHtml = '<ul>';
+                    descInputs.forEach(input => {
+                        if(input.value.trim()) {
+                            descHtml += `<li>${input.value}</li>`;
+                        }
+                    });
+                    descHtml += '</ul>';
+                }
+                
+                // Update DOM
+                document.getElementById('previewCompany').textContent = company;
+                document.getElementById('previewRole').textContent = role;
+                document.getElementById('previewLocation').textContent = location;
+                
+                // Handle Date
+                let dateStr = startDate;
+                if (endDate) {
+                    dateStr += ' – ' + endDate;
+                } else if (startDate) {
+                     dateStr += ' – Present';
+                }
+                document.getElementById('previewDate').textContent = dateStr;
+                
+                // Handle Location Separator
+                const sep = document.getElementById('previewLocationSeparator');
+                if (location && dateStr) {
+                    sep.style.display = 'inline';
+                } else {
+                    sep.style.display = 'none';
+                }
+                
+                // Description
+                document.getElementById('previewDescription').innerHTML = descHtml;
+            }
+
+            // AI Suggestions Logic
+            const experienceId = document.querySelector('input[name="id"]').value;
+            
+            async function fetchSuggestions() {
+                const panel = document.getElementById('aiSuggestionsPanel');
+                const list = document.getElementById('suggestionsList');
+                
+                if (!experienceId) {
+                    alert('Please save the experience at least once (Save & Continue) to generate personalized suggestions based on your role.');
+                    return;
+                }
+                
+                panel.classList.add('active');
+                list.innerHTML = `
+                    <div class="text-center text-muted py-3">
+                        <div class="spinner-border spinner-border-sm text-primary mb-2" role="status"></div>
+                        <div>Analyzing your role...</div>
+                    </div>
+                `;
+                
+                try {
+                    const response = await fetch(`/builder/experience/suggestions/${experienceId}`);
+                    const data = await response.json();
+                    
+                    if (data.error) {
+                         list.innerHTML = `<div class="text-danger small"><i class="bi bi-exclamation-circle me-1"></i> ${data.error}</div>`;
+                         return;
+                    }
+                    
+                    if (!data.suggestions || data.suggestions.length === 0) {
+                        list.innerHTML = `<div class="text-muted small">No specific suggestions found for this role yet. Try adding more details.</div>`;
+                        return;
+                    }
+                    
+                    list.innerHTML = '';
+                    data.suggestions.forEach(suggestion => {
+                        const chip = document.createElement('div');
+                        chip.className = 'suggestion-chip';
+                        chip.innerHTML = `<i class="bi bi-plus-lg"></i> ${suggestion}`;
+                        chip.onclick = () => addSuggestionToInput(suggestion, chip);
+                        list.appendChild(chip);
+                    });
+                    
+                } catch (error) {
+                    console.error('Error:', error);
+                    list.innerHTML = `<div class="text-danger small">Failed to load suggestions. Please try again.</div>`;
+                }
+            }
+            
+            function closeSuggestions() {
+                document.getElementById('aiSuggestionsPanel').classList.remove('active');
+            }
+            
+            function addSuggestionToInput(text, chipElement) {
+                // Add to list
+                const container = document.getElementById('descriptionContainer');
+                const newInput = document.createElement('div');
+                newInput.className = 'd-flex mb-2';
+                newInput.innerHTML = `
+                    <input type="text" class="form-control me-2"
+                           name="description"
+                           value="${text}">
+                    <button type="button" class="btn btn-sm btn-outline-danger"
+                            onclick="removeDescription(this)">
+                        <i class="bi bi-trash"></i>
+                    </button>
+                `;
+                container.appendChild(newInput);
+                updatePreview();
+                
+                // Animate removal from suggestions
+                chipElement.style.opacity = '0.5';
+                chipElement.style.pointerEvents = 'none';
+                chipElement.innerHTML = `<i class="bi bi-check-lg"></i> Added!`;
+            }
+            
+            // Attach listeners for real-time updates
+            document.getElementById('company').addEventListener('input', updatePreview);
+            document.getElementById('role').addEventListener('input', updatePreview);
+            document.getElementById('location').addEventListener('input', updatePreview);
+            // EndDate listener is already adding validation logic, let's append to it or just rely on the existing 'change' listener from the validation block if we edit it.
+            // Actually, let's add input listeners for faster feedback.
+            document.getElementById('endDate').addEventListener('input', updatePreview);
+            
+            // For dynamic description inputs, we use event delegation or attach on creation.
+            document.getElementById('descriptionContainer').addEventListener('input', function(e) {
+                if(e.target.name === 'description') {
+                    updatePreview();
+                }
+            });
+            
+            // Run once on load to populate if editing
+            document.addEventListener('DOMContentLoaded', updatePreview);
         </script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     </main>

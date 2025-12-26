@@ -110,6 +110,175 @@
         .dropdown-item.text-danger:hover {
          background-color: #fef2f2;
         }
+
+        /* Modern Button Styles */
+        .btn-modern {
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.01em;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            border: none;
+            cursor: pointer;
+            text-decoration: none;
+        }
+        
+        .btn-modern-primary {
+            background: linear-gradient(135deg, #4f46e5 0%, #4338ca 100%);
+            color: white;
+            box-shadow: 0 4px 6px -1px rgba(79, 70, 229, 0.2), 0 2px 4px -1px rgba(79, 70, 229, 0.1);
+        }
+        
+        .btn-modern-primary:hover {
+            box-shadow: 0 10px 15px -3px rgba(79, 70, 229, 0.3);
+            transform: translateY(-1px);
+            color: white;
+        }
+
+        .btn-modern-secondary {
+            background: white;
+            border: 1px solid #e2e8f0;
+            color: #475569;
+        }
+
+        .btn-modern-secondary:hover {
+            background: #f8fafc;
+            border-color: #cbd5e1;
+            color: #1e293b;
+        }
+
+        .btn-modern-outline {
+            background: transparent;
+            border: 1px solid #4f46e5;
+            color: #4f46e5;
+        }
+        
+        .btn-modern-outline:hover {
+            background: #eef2ff;
+        }
+        
+        .btn-icon-modern {
+             display: inline-flex;
+             align-items: center;
+             justify-content: center;
+             width: 36px;
+             height: 36px;
+             border-radius: 50%;
+             transition: all 0.2s;
+             border: 1px solid transparent;
+        }
+        .btn-icon-modern:hover {
+             background-color: #f1f5f9;
+             transform: translateY(-1px);
+        }
+        .btn-icon-modern-danger:hover {
+             background-color: #fef2f2;
+             color: #ef4444;
+             border-color: #fecaca;
+        }
+        
+        /* Card enhancements */
+        .experience-card {
+            border: 1px solid #e2e8f0;
+            border-radius: 1rem;
+            transition: all 0.2s;
+        }
+        .experience-card:hover {
+            border-color: #cbd5e1;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+        }
+        /* Preview Drawer Styles */
+        .preview-drawer {
+            position: fixed;
+            top: 0;
+            right: -500px;
+            width: 500px;
+            height: 100vh;
+            background: white;
+            box-shadow: -5px 0 25px rgba(0,0,0,0.1);
+            transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 1050;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .preview-drawer.active {
+            right: 0;
+        }
+
+        .preview-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #f8fafc;
+        }
+
+        .preview-body {
+            flex: 1;
+            padding: 2rem;
+            overflow-y: auto;
+            background: #ffffff;
+        }
+
+        .preview-content {
+            border: 1px dashed #cbd5e1;
+            padding: 2rem;
+            border-radius: 0.5rem;
+            background: #fff;
+        }
+
+        .preview-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.3);
+            z-index: 1040;
+            display: none;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .preview-overlay.active {
+            display: block;
+            opacity: 1;
+        }
+
+        /* Resume Preview Styles */
+        .preview-item {
+            margin-bottom: 1.5rem;
+        }
+        .preview-role {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #1e293b;
+        }
+        .preview-company {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #334155;
+        }
+        .preview-meta {
+            font-size: 0.875rem;
+            color: #64748b;
+            font-style: italic;
+            margin-bottom: 0.5rem;
+        }
+        .preview-desc ul {
+            padding-left: 1.25rem;
+            margin: 0;
+            color: #334155;
+            font-size: 0.9rem;
+        }
+        .preview-desc li {
+            margin-bottom: 0.25rem;
+        }
     </style>
 </head>
 <body>
@@ -137,12 +306,12 @@
             <li class="progress-item">
                 <span class="progress-dot">5</span><span>Skills</span>
             </li>
-            <li class="progress-item">
-                <span class="progress-dot">6</span><span>Summary</span>
-            </li>
-            <li class="progress-item">
-                <span class="progress-dot">7</span><span>Finalize</span>
-            </li>
+            <li class="progress-item"><span class="progress-dot">6</span><span>Summary</span></li>
+            <li class="progress-item"><span class="progress-dot">7</span><span>Projects</span></li>
+            <li class="progress-item"><span class="progress-dot">8</span><span>Certificates</span></li>
+            <li class="progress-item"><span class="progress-dot">9</span><span>Achievements</span></li>
+            <li class="progress-item"><span class="progress-dot">10</span><span>Finalize</span></li>
+
         </ul>
         <div
                 style="
@@ -195,9 +364,14 @@
                     Add your work history to showcase your professional journey
                 </p>
             </div>
-            <a th:href="@{/builder/experience/add}" class="btn btn-primary">
-                <i class="bi bi-plus-lg me-1"></i> Add Experience
-            </a>
+            <div class="d-flex gap-2">
+                <button type="button" class="btn-modern btn-modern-outline" onclick="togglePreview()" th:if="${!#lists.isEmpty(experiences)}">
+                    <i class="bi bi-eye me-1"></i> Preview Section
+                </button>
+                <a th:href="@{/builder/experience/add}" class="btn-modern btn-modern-primary">
+                    <i class="bi bi-plus-lg me-1"></i> Add Experience
+                </a>
+            </div>
         </div>
 
         <!-- Success/Error Messages -->
@@ -287,10 +461,10 @@
          </span>
                         </div>
                     </div>
-                    <div class="d-flex">
+                    <div class="d-flex gap-1">
                         <a
                                 th:href="@{/builder/experience/edit/{id}(id=${exp.id})}"
-                                class="btn btn-sm btn-outline-secondary rounded-circle p-2 me-1"
+                                class="btn-icon-modern text-secondary"
                                 data-bs-toggle="tooltip"
                                 data-bs-placement="top"
                                 title="Edit"
@@ -301,10 +475,11 @@
                                 th:action="@{/builder/experience/delete/{id}(id=${exp.id})}"
                                 method="post"
                                 onsubmit="return confirm('Are you sure you want to delete this experience?');"
+                                style="display:inline;"
                         >
                             <button
                                     type="submit"
-                                    class="btn btn-sm btn-outline-danger rounded-circle p-2"
+                                    class="btn-icon-modern btn-icon-modern-danger text-secondary"
                                     data-bs-toggle="tooltip"
                                     data-bs-placement="top"
                                     title="Delete"
@@ -332,15 +507,54 @@
             </div>
         </div>
 
-        <div class="d-flex justify-content-between mt-5">
-            <a th:href="@{/builder/basics}" class="btn btn-outline-secondary">
+        <div class="d-flex justify-content-between mt-5 mb-5 align-items-center">
+            <a th:href="@{/builder/basics}" class="btn-modern btn-modern-secondary text-decoration-none">
                 <i class="bi bi-arrow-left me-1"></i> Back to Basics
             </a>
-            <a th:href="@{/builder/education}" class="btn btn-primary">
+            <a th:href="@{/builder/education}" class="btn-modern btn-modern-primary text-decoration-none">
                 Continue to Education <i class="bi bi-arrow-right ms-1"></i>
             </a>
         </div>
     </main>
+
+    <!-- Preview Overlay -->
+    <div class="preview-overlay" id="previewOverlay" onclick="togglePreview()"></div>
+
+    <!-- Preview Drawer -->
+    <div class="preview-drawer" id="previewDrawer">
+        <div class="preview-header">
+            <h5 class="mb-0 fw-bold text-dark">Section Preview</h5>
+            <button type="button" class="btn-close" onclick="togglePreview()"></button>
+        </div>
+        <div class="preview-body">
+            <div class="alert alert-info py-2 small mb-3">
+                <i class="bi bi-info-circle me-1"></i> This is how your experience section will look.
+            </div>
+            <div class="preview-content">
+                <div th:if="${#lists.isEmpty(experiences)}" class="text-center text-muted py-4">
+                    <i class="bi bi-briefcase display-6 d-block mb-3 opacity-50"></i>
+                    No experience added yet.
+                </div>
+                <div th:each="exp : ${experiences}" class="preview-item">
+                    <div class="d-flex justify-content-between align-items-baseline">
+                        <div class="preview-role" th:text="${exp.role}">Role</div>
+                        <div class="preview-meta" th:if="${exp.period}">
+                            <span th:text="${exp.period.getDisplayPeriod()}">Date</span>
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-baseline mb-2">
+                        <div class="preview-company" th:text="${exp.company}">Company</div>
+                        <div class="preview-meta" th:text="${exp.location}">Location</div>
+                    </div>
+                    <div class="preview-desc" th:if="${exp.description != null && !exp.description.isEmpty()}">
+                        <ul>
+                            <li th:each="desc : ${exp.description}" th:text="${desc}">Description</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 <script>
@@ -353,6 +567,13 @@
       return new bootstrap.Tooltip(tooltipTriggerEl);
      });
     });
+
+    function togglePreview() {
+        const drawer = document.getElementById('previewDrawer');
+        const overlay = document.getElementById('previewOverlay');
+        drawer.classList.toggle('active');
+        overlay.classList.toggle('active');
+    }
 </script>
 </body>
 </html>
