@@ -37,7 +37,10 @@ public class SkillsExtractor implements ResumeSectionExtractor<Skills> {
         String response = ollamaPromptService.analyzeText(sectionText, schema);
         try {
             var node = objectMapper.readTree(response);
-            return objectMapper.convertValue(node.get("skills"), Skills.class);
+            Skills skills = objectMapper.convertValue(node.get("skills"), Skills.class);
+            // Ensure allSkills is populated
+            skills.updateAllSkills();
+            return skills;
         } catch (Exception e) {
             log.error("Error parsing skills", e);
             return new Skills();

@@ -14,20 +14,19 @@ import java.util.List;
 public class ResumeDocument {
     @Id
     private String id;
-    
+
     @Field("user_id")
     private String userId; // Link to user account if you have authentication
-    
+
     @DBRef
     @Field("personal_info")
     private PersonalInfo personalInfo;
-    
+
     private String objective;
     private List<String> professionalSummary;
     @DBRef
-    @Field("skills")
     private Skills skills;
-    
+
     @DBRef
     @Field("work_experience")
     private List<WorkExperience> workExperience;
@@ -39,13 +38,13 @@ public class ResumeDocument {
     private List<Achievement> achievements;
     private List<Certificate> certificates;
     private String declaration;
-    
+
     @Field("created_at")
     private LocalDateTime createdAt = LocalDateTime.now();
-    
+
     @Field("updated_at")
     private LocalDateTime updatedAt = LocalDateTime.now();
-    
+
     /**
      * Updates the updatedAt timestamp to current time
      */

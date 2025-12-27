@@ -47,31 +47,47 @@
                     </div>
                 </div>
 
-                <div class="skills-container animate-fade">
-                    <!-- Java Technologies -->
-                    <div th:if="${skills.javaTechnologies != null}" th:each="s : ${skills.javaTechnologies}" class="skill-chip">
-                        <span th:text="${s}"></span> <span class="remove">×</span>
+                <div class="skills-container animate-fade" style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 1rem;">
+                    <!-- Display all skills as a single list -->
+                    <div th:each="skill : ${skills.allSkills}" class="skill-chip" style="background: #e2e8f0; padding: 0.25rem 0.75rem; border-radius: 9999px; display: inline-flex; align-items: center; gap: 0.5rem;">
+                        <span th:text="${skill}"></span>
+                        <button type="button" class="remove" style="background: none; border: none; cursor: pointer; padding: 0; margin: 0; font-size: 1.2rem; line-height: 1; color: #64748b;">×</button>
                     </div>
-                    <!-- Frameworks -->
-                    <div th:if="${skills.frameworks != null}" th:each="s : ${skills.frameworks}" class="skill-chip">
-                        <span th:text="${s}"></span> <span class="remove">×</span>
-                    </div>
-                    <!-- Databases -->
-                    <div th:if="${skills.databases != null}" th:each="s : ${skills.databases}" class="skill-chip">
-                        <span th:text="${s}"></span> <span class="remove">×</span>
-                    </div>
-                    <!-- Tools -->
-                    <div th:if="${skills.tools != null}" th:each="s : ${skills.tools}" class="skill-chip">
-                        <span th:text="${s}"></span> <span class="remove">×</span>
-                    </div>
-                    <!-- Web Technologies -->
-                    <div th:if="${skills.webTechnologies != null}" th:each="s : ${skills.webTechnologies}" class="skill-chip">
-                        <span th:text="${s}"></span> <span class="remove">×</span>
-                    </div>
-                    <!-- IDE -->
-                    <div th:if="${skills.ide != null}" th:each="s : ${skills.ide}" class="skill-chip">
-                        <span th:text="${s}"></span> <span class="remove">×</span>
-                    </div>
+                </div>
+                
+                <!-- Hidden fields to maintain the original category structure for backend -->
+                <div th:each="skill : ${skills.javaTechnologies}">
+                    <input type="hidden" name="javaTechnologies" th:value="${skill}" />
+                </div>
+                <div th:each="skill : ${skills.webTechnologies}">
+                    <input type="hidden" name="webTechnologies" th:value="${skill}" />
+                </div>
+                <div th:each="skill : ${skills.distributedTechnologies}">
+                    <input type="hidden" name="distributedTechnologies" th:value="${skill}" />
+                </div>
+                <div th:each="skill : ${skills.frameworks}">
+                    <input type="hidden" name="frameworks" th:value="${skill}" />
+                </div>
+                <div th:each="skill : ${skills.databases}">
+                    <input type="hidden" name="databases" th:value="${skill}" />
+                </div>
+                <div th:each="skill : ${skills.applicationServers}">
+                    <input type="hidden" name="applicationServers" th:value="${skill}" />
+                </div>
+                <div th:each="skill : ${skills.webServers}">
+                    <input type="hidden" name="webServers" th:value="${skill}" />
+                </div>
+                <div th:each="skill : ${skills.tools}">
+                    <input type="hidden" name="tools" th:value="${skill}" />
+                </div>
+                <div th:each="skill : ${skills.unitTesting}">
+                    <input type="hidden" name="unitTesting" th:value="${skill}" />
+                </div>
+                <div th:each="skill : ${skills.designPatterns}">
+                    <input type="hidden" name="designPatterns" th:value="${skill}" />
+                </div>
+                <div th:each="skill : ${skills.ide}">
+                    <input type="hidden" name="ide" th:value="${skill}" />
                 </div>
 
                 <div class="full-width" style="display: flex; justify-content: space-between; margin-top: 4rem;">

@@ -2,16 +2,11 @@ package com.jag.aires.controller;
 
 import com.jag.aires.exception.ResourceNotFoundException;
 import com.jag.aires.extractor.*;
-import com.jag.aires.model.Education;
-import com.jag.aires.model.PersonalInfo;
-import com.jag.aires.model.ResumeDocument;
-import com.jag.aires.model.WorkExperience;
-import com.jag.aires.repository.EducationRepository;
-import com.jag.aires.repository.PersonalInfoRepository;
-import com.jag.aires.repository.ResumeRepository;
-import com.jag.aires.repository.WorkExperienceRepository;
+import com.jag.aires.model.*;
+import com.jag.aires.repository.*;
 import com.jag.aires.service.ResumeSectionSplitterService;
 import com.jag.aires.util.ExperiencePeriod;
+import com.mongodb.DuplicateKeyException;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -47,6 +42,7 @@ public class ResumeBuilderController {
     private final PersonalInfoRepository personalInfoRepository;
     private final WorkExperienceRepository workExperienceRepository;
     private final EducationRepository educationRepository;
+    private final SkillsRepository skillsRepository;
 
     private ResumeDocument getOrCreateResume(HttpSession session) {
         ResumeDocument resume = (ResumeDocument) session.getAttribute("resumeData");
@@ -875,15 +871,55 @@ public class ResumeBuilderController {
     @GetMapping("/skills-list")
     @SuppressWarnings("unchecked")
     public String showSkillsList(HttpSession session, Model model) {
+        log.info("Entering showSkillsList");
         Map<String, String> sections = (Map<String, String>) session.getAttribute("rawSections");
         ResumeDocument resume = (ResumeDocument) session.getAttribute("resumeData");
 
-        if (resume != null && resume.getSkills() == null && sections != null && sections.containsKey("SKILLS")) {
-            resume.setSkills(skillsExtractor.extract(sections.get("SKILLS")));
+        if (sections == null || resume == null) {
+            log.error("Sections or resume is null in session");
+            return "redirect:/";
         }
 
-        model.addAttribute("skills", resume != null ? resume.getSkills() : null);
-        return "builder-skills-list";
+        log.info("Resume ID: {}, Has SKILLS section: {}",
+                resume.getId(),
+                sections.containsKey("SKILLS"));
+
+        try {
+            if (resume.getSkills() == null) {
+                if (sections.containsKey("SKILLS")) {
+                    log.info("Extracting skills from section text");
+                    Skills skills = skillsExtractor.extract(sections.get("SKILLS"));
+                    log.info("Extracted skills: {}", skills.getAllSkills());
+
+                    skills.setResumeId(resume.getId());
+                    log.info("Saving skills with resumeId: {}", resume.getId());
+
+                    skills = skillsRepository.save(skills);
+                    log.info("Saved skills with ID: {}", skills.getId());
+
+                    resume.setSkills(skills);
+                    resume = resumeRepository.save(resume);
+                    log.info("Updated resume with skills reference");
+                } else {
+                    log.warn("No SKILLS section found in resume");
+                }
+            } else {
+                log.info("Using existing skills with ID: {}", resume.getSkills().getId());
+                resume.getSkills().updateAllSkills();
+            }
+
+            model.addAttribute("skills", resume.getSkills() != null ? resume.getSkills() : new Skills());
+            return "builder-skills-list";
+        } catch (Exception e) {
+            log.error("Error in showSkillsList", e);
+            model.addAttribute("error", "Error processing skills: " + e.getMessage());
+            return "error";
+        }
+    }
+
+    @ExceptionHandler(DuplicateKeyException.class)
+    public ResponseEntity<?> handleDuplicateKey(DuplicateKeyException ex) {
+        return ResponseEntity.badRequest().body("Skills for this resume already exist");
     }
 
     @GetMapping("/summary")
