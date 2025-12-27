@@ -868,6 +868,8 @@ public class ResumeBuilderController {
         return "builder-skills";
     }
 
+    // In ResumeBuilderController.java
+
     @GetMapping("/skills-list")
     @SuppressWarnings("unchecked")
     public String showSkillsList(HttpSession session, Model model) {
@@ -881,15 +883,20 @@ public class ResumeBuilderController {
         }
 
         log.info("Resume ID: {}, Has SKILLS section: {}",
-                resume.getId(),
-                sections.containsKey("SKILLS"));
+                resume.getId(), sections.containsKey("SKILLS"));
 
         try {
             if (resume.getSkills() == null) {
                 if (sections.containsKey("SKILLS")) {
                     log.info("Extracting skills from section text");
-                    Skills skills = skillsExtractor.extract(sections.get("SKILLS"));
-                    log.info("Extracted skills: {}", skills.getAllSkills());
+                    Skills skills = null;
+                    try {
+                        skills = skillsExtractor.extract(sections.get("SKILLS"));
+                        log.info("Extracted skills: {}", skills.getAllSkills());
+                    } catch (Exception e) {
+                        log.error("Error extracting skills, creating empty skills object", e);
+                        skills = new Skills();
+                    }
 
                     skills.setResumeId(resume.getId());
                     log.info("Saving skills with resumeId: {}", resume.getId());
@@ -902,13 +909,15 @@ public class ResumeBuilderController {
                     log.info("Updated resume with skills reference");
                 } else {
                     log.warn("No SKILLS section found in resume");
+                    resume.setSkills(new Skills());
+                    resume = resumeRepository.save(resume);
                 }
             } else {
                 log.info("Using existing skills with ID: {}", resume.getSkills().getId());
                 resume.getSkills().updateAllSkills();
             }
 
-            model.addAttribute("skills", resume.getSkills() != null ? resume.getSkills() : new Skills());
+            model.addAttribute("skills", resume.getSkills());
             return "builder-skills-list";
         } catch (Exception e) {
             log.error("Error in showSkillsList", e);
@@ -920,6 +929,80 @@ public class ResumeBuilderController {
     @ExceptionHandler(DuplicateKeyException.class)
     public ResponseEntity<?> handleDuplicateKey(DuplicateKeyException ex) {
         return ResponseEntity.badRequest().body("Skills for this resume already exist");
+    }
+
+    @PostMapping("/skills/add")
+    @ResponseBody
+    public ResponseEntity<?> addSkill(
+            @RequestParam String skill,
+            HttpSession session) {
+        try {
+            ResumeDocument resume = getOrCreateResume(session);
+            if (resume == null || resume.getId() == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                        .body("No active resume found");
+            }
+
+            // Get or create skills
+            Skills skills = resume.getSkills();
+            if (skills == null) {
+                skills = new Skills();
+                skills.setResumeId(resume.getId());
+                skills = skillsRepository.save(skills);
+                resume.setSkills(skills);
+                resumeRepository.save(resume);
+            }
+
+            // Add the skill
+            skills.addSkill(skill);
+            skillsRepository.save(skills);
+
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            log.error("Error adding skill", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error adding skill: " + e.getMessage());
+        }
+    }
+
+    @PostMapping("/skills/remove")
+    @ResponseBody
+    public ResponseEntity<?> removeSkill(
+            @RequestParam String skill,
+            HttpSession session) {
+        try {
+            ResumeDocument resume = getOrCreateResume(session);
+            if (resume == null || resume.getSkills() == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body("No skills found to remove");
+            }
+
+            Skills skills = resume.getSkills();
+            skills.removeSkill(skill);
+            skillsRepository.save(skills);
+
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            log.error("Error removing skill", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error removing skill: " + e.getMessage());
+        }
+    }
+
+    @GetMapping("/skills/list")
+    @ResponseBody
+    public ResponseEntity<?> listSkills(HttpSession session) {
+        try {
+            ResumeDocument resume = getOrCreateResume(session);
+            if (resume == null || resume.getSkills() == null) {
+                return ResponseEntity.ok(Collections.emptyList());
+            }
+            return ResponseEntity.ok(resume.getSkills().getAllSkills());
+        } catch (Exception e) {
+            log.error("Error listing skills", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error listing skills: " + e.getMessage());
+        }
     }
 
     @GetMapping("/summary")

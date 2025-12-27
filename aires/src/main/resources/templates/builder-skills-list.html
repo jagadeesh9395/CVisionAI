@@ -7,6 +7,37 @@
     <link rel="stylesheet" th:href="@{/css/main.css}">
     <link rel="stylesheet" href="../static/css/main.css">
 </head>
+<style>
+    .skills-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 16px;
+    }
+
+    .skill-item {
+        display: flex;
+        align-items: center;
+        background: #e2e8f0;
+        padding: 4px 12px;
+        border-radius: 16px;
+        gap: 8px;
+    }
+
+    .remove-skill {
+        padding: 0 6px;
+        line-height: 1;
+        border: none;
+        background: transparent;
+        cursor: pointer;
+        color: #dc2626;
+        font-weight: bold;
+    }
+
+    .remove-skill:hover {
+        color: #b91c1c;
+    }
+</style>
 <body>
     <div class="builder-layout">
         <aside class="sidebar">
@@ -39,19 +70,25 @@
             </header>
 
             <div style="margin-top: 2rem;">
-                <div class="form-group" style="max-width: 500px; margin-bottom: 2rem;">
-                    <label>Add a skill (e.g., Spring Boot, React)</label>
-                    <div style="display: flex; gap: 0.5rem;">
-                        <input type="text" placeholder="Start typing a skill..." style="flex: 1;">
-                        <button class="btn btn-primary" style="padding: 0.75rem 1.5rem;">Add</button>
+                <!-- builder-skills-list.html -->
+                <div class="skills-container">
+                    <!-- Add Skill Form -->
+                    <div class="form-group">
+                        <label>Add a new skill</label>
+                        <div class="input-group">
+                            <input type="text" id="newSkillInput" class="form-control"
+                                   placeholder="Enter a skill (e.g., Java, React)">
+                            <button class="btn btn-primary" id="addSkillBtn">Add Skill</button>
+                        </div>
                     </div>
-                </div>
 
-                <div class="skills-container animate-fade" style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 1rem;">
-                    <!-- Display all skills as a single list -->
-                    <div th:each="skill : ${skills.allSkills}" class="skill-chip" style="background: #e2e8f0; padding: 0.25rem 0.75rem; border-radius: 9999px; display: inline-flex; align-items: center; gap: 0.5rem;">
-                        <span th:text="${skill}"></span>
-                        <button type="button" class="remove" style="background: none; border: none; cursor: pointer; padding: 0; margin: 0; font-size: 1.2rem; line-height: 1; color: #64748b;">×</button>
+                    <!-- Skills List -->
+                    <div class="skills-list" id="skillsList">
+                        <div th:each="skill : ${skills.allSkills}" class="skill-item">
+                            <span th:text="${skill}"></span>
+                            <button class="btn btn-sm btn-danger remove-skill"
+                                    th:data-skill="${skill}">×</button>
+                        </div>
                     </div>
                 </div>
                 
@@ -125,5 +162,75 @@
             </div>
         </aside>
     </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const addSkillBtn = document.getElementById('addSkillBtn');
+            const newSkillInput = document.getElementById('newSkillInput');
+            const skillsList = document.getElementById('skillsList');
+
+            // Add skill
+            addSkillBtn.addEventListener('click', async () => {
+                const skill = newSkillInput.value.trim();
+                if (!skill) return;
+
+                try {
+                    const response = await fetch('/builder/skills/add', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                        },
+                        body: `skill=${encodeURIComponent(skill)}`
+                    });
+
+                    if (response.ok) {
+                        // Add to UI
+                        const skillElement = document.createElement('div');
+                        skillElement.className = 'skill-item';
+                        skillElement.innerHTML = `
+                            <span>${skill}</span>
+                            <button class="btn btn-sm btn-danger remove-skill"
+                                    data-skill="${skill}">×</button>
+                        `;
+                        skillsList.appendChild(skillElement);
+                        newSkillInput.value = '';
+                    } else {
+                        alert('Failed to add skill');
+                    }
+                } catch (error) {
+                    console.error('Error adding skill:', error);
+                    alert('Error adding skill');
+                }
+            });
+
+            // Remove skill
+            document.addEventListener('click', async (e) => {
+                if (e.target.classList.contains('remove-skill')) {
+                    const skillItem = e.target.closest('.skill-item');
+                    const skill = e.target.dataset.skill;
+
+                    if (confirm(`Remove ${skill}?`)) {
+                        try {
+                            const response = await fetch('/builder/skills/remove', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/x-www-form-urlencoded',
+                                },
+                                body: `skill=${encodeURIComponent(skill)}`
+                            });
+
+                            if (response.ok) {
+                                skillItem.remove();
+                            } else {
+                                alert('Failed to remove skill');
+                            }
+                        } catch (error) {
+                            console.error('Error removing skill:', error);
+                            alert('Error removing skill');
+                        }
+                    }
+                }
+            });
+        });
+    </script>
 </body>
 </html>

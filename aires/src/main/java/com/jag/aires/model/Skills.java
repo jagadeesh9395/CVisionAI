@@ -51,6 +51,18 @@ public class Skills {
 
     // New field to store all skills as a single list
     private List<String> allSkills = new ArrayList<>();
+    // Helper methods
+    public void addSkill(String skill) {
+        if (skill != null && !skill.trim().isEmpty() && !allSkills.contains(skill.trim())) {
+            allSkills.add(skill.trim());
+        }
+    }
+
+    public void removeSkill(String skill) {
+        if (skill != null) {
+            allSkills.removeIf(s -> s.equalsIgnoreCase(skill.trim()));
+        }
+    }
 
     /**
      * Combines all skills from different categories into a single list

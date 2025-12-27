@@ -12,11 +12,15 @@ import java.util.Optional;
 public interface SkillsRepository extends MongoRepository<Skills, String> {
     Optional<Skills> findByResumeId(String resumeId);
 
-    @Query(value = "{'resumeId': ?0}", delete = true)
+    @Query(value = "{'resumeId' : ?0}", delete = true)
     void deleteByResumeId(String resumeId);
 
-    @Query("{'resumeId': ?0, 'skills': {$exists: true, $ne: []}}")
+    @Query(value = "{'resumeId' : ?0}", fields = "{'allSkills' : 1}")
     Optional<Skills> findSkillsByResumeId(String resumeId);
-    @Query("{$set: {'allSkills': ?1}}")
-    void updateSkills(String resumeId, List<String> skills);
+
+    @Query("{$addToSet: {'allSkills': ?1}}")
+    void addSkill(String resumeId, String skill);
+
+    @Query("{$pull: {'allSkills': ?1}}")
+    void removeSkill(String resumeId, String skill);
 }
