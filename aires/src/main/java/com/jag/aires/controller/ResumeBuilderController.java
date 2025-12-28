@@ -1034,20 +1034,24 @@ public class ResumeBuilderController {
     }
 
     private String extractSummaryFromFullText(String fullText) {
+        // Normalize line endings and clean up the text
+        String normalizedText = fullText.replaceAll("\\r\\n", "\n").trim();
+
         // Pattern 1: Look for explicit summary/objective/profile sections
         Pattern explicitSummaryPattern = Pattern.compile(
-                "(?i)(?:summary|profile|objective)[\\s:]*\\n(.*?)(?=\\n\\s*(?:Experience|Education|Skills|Work History|Employment|Projects|$))",
-                Pattern.DOTALL
-        );
-
-        // Pattern 2: Fallback to first paragraph if no explicit section found
-        Pattern firstParagraphPattern = Pattern.compile(
-                "^(.*?)(?=\\n\\s*\\n|\\n\\s*(?:Experience|Education|Skills|Work History|Employment|Projects|$))",
-                Pattern.DOTALL
+                "(?i)(?:summary|profile|objective|about me|about)[\\s:]*\\n(.*?)(?=\\n\\s*\\n\\s*(?:" +
+                        "Experience|Work History|Professional Experience|" +
+                        "Education|Academic Background|" +
+                        "Skills|Technical Skills|Expertise|" +
+                        "Projects|Certifications|" +
+                        "Achievements|Awards|" +
+                        "Languages|Interests|" +
+                        "References|$))",
+                Pattern.DOTALL | Pattern.CASE_INSENSITIVE
         );
 
         // Try explicit summary pattern first
-        Matcher matcher = explicitSummaryPattern.matcher(fullText);
+        Matcher matcher = explicitSummaryPattern.matcher(normalizedText);
         if (matcher.find()) {
             String summary = matcher.group(1).trim();
             if (summary.length() > 30) {  // Reasonable minimum length for a summary
@@ -1055,8 +1059,22 @@ public class ResumeBuilderController {
             }
         }
 
-        // Fallback to first paragraph if no explicit summary found
-        matcher = firstParagraphPattern.matcher(fullText);
+        // Pattern 2: Fallback to first paragraph if no explicit section found
+        // This will capture everything until the first major section or double newline
+        Pattern firstParagraphPattern = Pattern.compile(
+                "^(.*?)(?=\\n\\s*\\n\\s*(?:" +
+                        "Experience|Work History|Professional Experience|" +
+                        "Education|Academic Background|" +
+                        "Skills|Technical Skills|Expertise|" +
+                        "Projects|Certifications|" +
+                        "Achievements|Awards|" +
+                        "Summary|Profile|Objective|" +
+                        "Languages|Interests|" +
+                        "References|$))",
+                Pattern.DOTALL | Pattern.CASE_INSENSITIVE
+        );
+
+        matcher = firstParagraphPattern.matcher(normalizedText);
         if (matcher.find()) {
             String firstParagraph = matcher.group(1).trim();
             // Ensure it's not too short and not just a name/title
@@ -1065,8 +1083,10 @@ public class ResumeBuilderController {
             }
         }
 
-        // If no suitable text found, return null
-        return null;
+        // If no suitable text found, return the first 500 characters as a fallback
+        return normalizedText.length() > 500 ?
+                normalizedText.substring(0, 500) + "..." :
+                normalizedText;
     }
 
     @GetMapping("/summary-edit")
