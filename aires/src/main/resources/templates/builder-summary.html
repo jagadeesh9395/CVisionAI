@@ -68,20 +68,48 @@
         </aside>
 
         <main class="builder-main" style="display: flex; flex-direction: column; justify-content: center;">
-            <div style="max-width: 600px;">
+            <div style="max-width: 800px;">
                 <p style="color: var(--text-muted); font-size: 1rem; margin-bottom: 0.5rem;">Almost there! Next up → Summary</p>
-                <h2 style="font-size: 3rem; font-weight: 800; line-height: 1.1; margin-bottom: 2rem;">Write a powerful <span style="position: relative; z-index: 1;">summary<span style="position: absolute; bottom: 8px; left: 0; width: 100%; height: 8px; background: var(--highlight); z-index: -1;"></span></span></h2>
+                <h2 style="font-size: 3rem; font-weight: 800; line-height: 1.1; margin-bottom: 2rem;">Your Professional <span style="position: relative; z-index: 1;">Summary<span style="position: absolute; bottom: 8px; left: 0; width: 100%; height: 8px; background: var(--highlight); z-index: -1;"></span></span></h2>
                 
-                <div style="display: flex; align-items: flex-start; gap: 1rem; background: #f8fafc; padding: 1.5rem; border-radius: 1rem; margin-bottom: 3rem;">
-                    <div style="font-size: 1.5rem;">✍️</div>
-                    <p style="color: var(--text-muted);">This is your elevator pitch. Focus on your years of experience, core expertise, and major achievements. We'll help you refine it with AI.</p>
+                <!-- Summary Card -->
+                <div class="summary-card" style="background: white; border-radius: 1rem; padding: 2rem; margin-bottom: 2rem; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                    <div class="summary-content" style="min-height: 200px;">
+                        <div th:if="${resume?.summary == null || resume.summary.bulletPoints == null || resume.summary.bulletPoints.isEmpty()}"
+                             style="color: #94a3b8; font-style: italic; text-align: center; padding: 2rem 0;">
+                            No summary added yet. Click "Edit Summary" to create one.
+                        </div>
+                        <ul th:if="${resume?.summary != null && resume.summary.bulletPoints != null && !resume.summary.bulletPoints.isEmpty()}"
+                            style="list-style: disc; padding-left: 1.5rem; margin: 0;">
+                            <li th:each="item : ${resume.summary.bulletPoints}"
+                                th:text="${item}"
+                                style="margin-bottom: 0.5rem; color: #334155;"></li>
+                        </ul>
+                    </div>
+                    <div style="display: flex; justify-content: flex-end; margin-top: 2rem;">
+                        <a th:href="@{/builder/summary-edit}" class="btn btn-primary" style="padding: 0.75rem 2rem;">
+                            <span>✏️</span> Edit Summary
+                        </a>
+                    </div>
                 </div>
 
-                <div class="full-width" style="display: flex; justify-content: space-between; align-items: center; margin-top: 4rem;">
+                <!-- Success/Error Messages -->
+                <div th:if="${param.success != null}" 
+                     style="background: #dcfce7; color: #166534; padding: 1rem; border-radius: 0.5rem; margin-bottom: 1.5rem;">
+                    <span th:text="${param.success}"></span>
+                </div>
+                <div th:if="${param.error != null}" 
+                     style="background: #fee2e2; color: #991b1b; padding: 1rem; border-radius: 0.5rem; margin-bottom: 1.5rem;">
+                    <span th:text="${param.error}"></span>
+                </div>
+
+                <div class="full-width" style="display: flex; justify-content: space-between; align-items: center; margin-top: 2rem;">
                     <a th:href="@{/builder/skills-list}" class="btn btn-outline" style="padding: 0.75rem 3rem;">Back</a>
                     <div style="position: relative;">
-                         <svg width="40" height="20" viewBox="0 0 40 20" style="position: absolute; left: -50px; top: -10px;"><path d="M38 2C35 8 30 15 2 18" stroke="#94a3b8" stroke-width="2" fill="none" stroke-linecap="round" stroke-dasharray="4 4"/></svg>
-                         <a th:href="@{/builder/summary-edit}" class="btn btn-primary" style="padding: 0.75rem 5rem;">Continue</a>
+                        <svg width="40" height="20" viewBox="0 0 40 20" style="position: absolute; left: -50px; top: -10px;">
+                            <path d="M38 2C35 8 30 15 2 18" stroke="#94a3b8" stroke-width="2" fill="none" stroke-linecap="round" stroke-dasharray="4 4"/>
+                        </svg>
+                        <a th:href="@{/builder/projects}" class="btn btn-primary" style="padding: 0.75rem 4rem;">Continue</a>
                     </div>
                 </div>
             </div>

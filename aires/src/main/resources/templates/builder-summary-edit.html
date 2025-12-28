@@ -74,18 +74,22 @@
             </header>
 
             <div style="margin-top: 2rem;">
-                <form th:action="@{/builder/finalize}" method="post">
+                <form th:action="@{/builder/summary/save}" method="post" id="summaryForm">
                     <div style="position: relative; margin-bottom: 2rem;">
-                        <button type="button" class="btn btn-outline" style="position: absolute; right: 1rem; top: 1rem; font-size: 0.75rem; padding: 0.5rem 1rem;">
+                        <button type="button" id="aiRewriteBtn" class="btn btn-outline" style="position: absolute; right: 1rem; top: 1rem; font-size: 0.75rem; padding: 0.5rem 1rem;" onclick="rewriteWithAI()">
                             <span style="margin-right:0.5rem;">🪄</span> AI Re-write
                         </button>
-                        <textarea name="summary" class="summary-editor" placeholder="Write your professional summary here..." 
-                                  th:text="${#strings.listJoin(summary, ' ')}">Experienced Senior Software Engineer...</textarea>
+                        <textarea id="summaryText" name="summary" class="summary-editor" placeholder="Write your professional summary here..." 
+                                  th:text="${summary}" style="min-height: 200px; padding: 1rem; padding-right: 2.5rem;"></textarea>
+                    </div>
+                    <div id="rewriteStatus" class="hidden" style="margin-top: 0.5rem; font-size: 0.875rem; color: #10b981;">
+                        <span class="spinner">↻</span> Rewriting with AI...
                     </div>
 
-                    <div class="full-width" style="display: flex; justify-content: space-between; margin-top: 4rem;">
-                        <a th:href="@{/builder/summary}" class="btn btn-outline" style="padding: 0.75rem 3rem;">Back</a>
-                        <button type="submit" class="btn btn-primary" style="padding: 0.75rem 4rem;">Continue</button>
+                    <div class="full-width" style="display: flex; justify-content: space-between; margin-top: 4rem; gap: 1rem;">
+                        <a th:href="@{/builder/summary}" class="btn btn-outline" style="padding: 0.75rem 2rem; flex: 1;">Back</a>
+                        <button type="button" class="btn btn-outline" style="padding: 0.75rem 2rem; flex: 1;" onclick="saveAndReturn()">Save & Return</button>
+                        <button type="submit" class="btn btn-primary" style="padding: 0.75rem 2rem; flex: 1;">Continue</button>
                     </div>
                 </form>
             </div>
@@ -113,5 +117,65 @@
             </div>
         </aside>
     </div>
+    
+    <script th:inline="javascript">
+        function rewriteWithAI() {
+            const textarea = document.getElementById('summaryText');
+            const button = document.getElementById('aiRewriteBtn');
+            const status = document.getElementById('rewriteStatus');
+            
+            // Show loading state
+            button.disabled = true;
+            status.classList.remove('hidden');
+            
+            fetch('/builder/summary/rewrite', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: 'text=' + encodeURIComponent(textarea.value)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    throw new Error(data.error);
+                }
+                // Update textarea with the rewritten summary
+                if (data && data.length > 0) {
+                    textarea.value = data.join('\n');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Failed to rewrite summary. ' + error.message);
+            })
+            .finally(() => {
+                button.disabled = false;
+                status.classList.add('hidden');
+            });
+        }
+        
+        // Add some basic styling for the hidden class
+        const style = document.createElement('style');
+        style.textContent = `
+            .hidden { display: none; }
+            .spinner {
+                display: inline-block;
+                animation: spin 1s linear infinite;
+                margin-right: 0.5rem;
+            }
+            @keyframes spin {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+            }
+        `;
+        document.head.appendChild(style);
+        
+        function saveAndReturn() {
+            const form = document.getElementById('summaryForm');
+            form.action = '/builder/summary/save';
+            form.submit();
+        }
+    </script>
 </body>
 </html>

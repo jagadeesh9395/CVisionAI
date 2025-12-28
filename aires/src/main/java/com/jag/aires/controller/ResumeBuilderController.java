@@ -25,6 +25,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.io.ByteArrayInputStream;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Controller
 @RequestMapping("/builder")
@@ -43,6 +45,7 @@ public class ResumeBuilderController {
     private final WorkExperienceRepository workExperienceRepository;
     private final EducationRepository educationRepository;
     private final SkillsRepository skillsRepository;
+    private final SummaryRepository summaryRepository;
 
     private ResumeDocument getOrCreateResume(HttpSession session) {
         ResumeDocument resume = (ResumeDocument) session.getAttribute("resumeData");
@@ -75,8 +78,11 @@ public class ResumeBuilderController {
             new Thread(() -> {
                 try {
                     // Process the file
+                    // When processing the uploaded file
                     String rawText = new Tika().parseToString(new ByteArrayInputStream(fileBytes));
+                    session.setAttribute("fullResumeText", rawText);  // Store the full text
                     Map<String, String> sections = splitterService.splitSections(rawText);
+                    session.setAttribute("rawSections", sections);
 
                     if (sections == null || sections.isEmpty()) {
                         session.setAttribute("processingError", "Failed to extract content from the resume");
@@ -926,10 +932,6 @@ public class ResumeBuilderController {
         }
     }
 
-    @ExceptionHandler(DuplicateKeyException.class)
-    public ResponseEntity<?> handleDuplicateKey(DuplicateKeyException ex) {
-        return ResponseEntity.badRequest().body("Skills for this resume already exist");
-    }
 
     @PostMapping("/skills/add")
     @ResponseBody
@@ -1006,23 +1008,170 @@ public class ResumeBuilderController {
     }
 
     @GetMapping("/summary")
-    public String showSummary() {
+    public String showSummary(Model model, HttpSession session) {
+        ResumeDocument resume = getOrCreateResume(session);
+        log.info("resume data : {}", resume);
+        String fullResumeText = (String) session.getAttribute("fullResumeText"); // Assuming you store the full text in session
+        log.info("full resume Text data : {}", fullResumeText);
+        if ((resume.getSummary() == null || resume.getSummary().getBulletPoints() == null)
+                && fullResumeText != null && !fullResumeText.isEmpty()) {
+
+            // Extract summary from the beginning of the resume
+            String summaryText = extractSummaryFromFullText(fullResumeText);
+
+            if (summaryText != null && !summaryText.isEmpty()) {
+                Summary summary = summaryExtractor.extract(summaryText);
+                summary.setResumeId(resume.getId());
+                summary = summaryRepository.save(summary);
+                resume.setSummary(summary);
+                resume = resumeRepository.save(resume);
+                session.setAttribute("resumeData", resume);
+            }
+        }
+
+        model.addAttribute("resume", resume);
         return "builder-summary";
     }
 
-    @GetMapping("/summary-edit")
-    @SuppressWarnings("unchecked")
-    public String showSummaryEdit(HttpSession session, Model model) {
-        Map<String, String> sections = (Map<String, String>) session.getAttribute("rawSections");
-        ResumeDocument resume = (ResumeDocument) session.getAttribute("resumeData");
+    private String extractSummaryFromFullText(String fullText) {
+        // Pattern 1: Look for explicit summary/objective/profile sections
+        Pattern explicitSummaryPattern = Pattern.compile(
+                "(?i)(?:summary|profile|objective)[\\s:]*\\n(.*?)(?=\\n\\s*(?:Experience|Education|Skills|Work History|Employment|Projects|$))",
+                Pattern.DOTALL
+        );
 
-        if (resume != null && resume.getProfessionalSummary() == null && sections != null
-                && sections.containsKey("SUMMARY")) {
-            resume.setProfessionalSummary(summaryExtractor.extract(sections.get("SUMMARY")));
+        // Pattern 2: Fallback to first paragraph if no explicit section found
+        Pattern firstParagraphPattern = Pattern.compile(
+                "^(.*?)(?=\\n\\s*\\n|\\n\\s*(?:Experience|Education|Skills|Work History|Employment|Projects|$))",
+                Pattern.DOTALL
+        );
+
+        // Try explicit summary pattern first
+        Matcher matcher = explicitSummaryPattern.matcher(fullText);
+        if (matcher.find()) {
+            String summary = matcher.group(1).trim();
+            if (summary.length() > 30) {  // Reasonable minimum length for a summary
+                return summary;
+            }
         }
 
-        model.addAttribute("summary", resume != null ? resume.getProfessionalSummary() : null);
+        // Fallback to first paragraph if no explicit summary found
+        matcher = firstParagraphPattern.matcher(fullText);
+        if (matcher.find()) {
+            String firstParagraph = matcher.group(1).trim();
+            // Ensure it's not too short and not just a name/title
+            if (firstParagraph.length() > 50 && firstParagraph.contains(" ")) {
+                return firstParagraph;
+            }
+        }
+
+        // If no suitable text found, return null
+        return null;
+    }
+
+    @GetMapping("/summary-edit")
+    public String showSummaryEdit(Model model, HttpSession session) {
+        ResumeDocument resume = getOrCreateResume(session);
+        Map<String, String> sections = (Map<String, String>) session.getAttribute("rawSections");
+
+        if ((resume.getSummary() == null || resume.getSummary().getBulletPoints() == null)
+                && sections != null && sections.containsKey("SUMMARY")) {
+            Summary summary = summaryExtractor.extract(sections.get("SUMMARY"));
+            summary.setResumeId(resume.getId());
+            summary = summaryRepository.save(summary);  // Save the summary first
+            resume.setSummary(summary);
+            resume = resumeRepository.save(resume);  // Then save the resume with the reference
+            session.setAttribute("resumeData", resume);
+        }
+
+        // Convert the summary points to a single string with line breaks
+        String summaryText = (resume.getSummary() != null && resume.getSummary().getBulletPoints() != null)
+                ? String.join("\n", resume.getSummary().getBulletPoints())
+                : "";
+
+        model.addAttribute("summary", summaryText);
         return "builder-summary-edit";
+    }
+
+    @PostMapping("/summary")
+    public String saveSummary(@RequestParam("summary") String summaryText,
+                              HttpSession session,
+                              RedirectAttributes redirectAttributes) {
+        try {
+            ResumeDocument resume = getOrCreateResume(session);
+            log.info("Saving summary for resume ID: {}", resume.getId());
+
+            // Create or update the summary
+            Summary summary = resume.getSummary();
+            if (summary == null) {
+                summary = new Summary();
+                summary.setResumeId(resume.getId());
+            }
+
+            // Update summary data
+            List<String> bulletPoints = List.of(summaryText.split("\\n"));
+            summary.setBulletPoints(bulletPoints);
+            summary.setVersion("v" + System.currentTimeMillis());
+
+            // Save to database
+            if (summary.getId() == null) {
+                summary = summaryRepository.save(summary);
+                resume.setSummary(summary);
+                resumeRepository.save(resume);
+            } else {
+                summaryRepository.save(summary);
+            }
+
+            // Update session
+            session.setAttribute("resumeData", resume);
+            log.info("Successfully saved summary with ID: {}", summary.getId());
+
+            redirectAttributes.addFlashAttribute("success", "Summary saved successfully!");
+        } catch (Exception e) {
+            log.error("Error saving summary: {}", e.getMessage(), e);
+            redirectAttributes.addFlashAttribute("error", "Failed to save summary. Please try again.");
+        }
+        return "redirect:/builder/summary";
+    }
+
+//    @GetMapping("/summary-edit")
+//    @SuppressWarnings("unchecked")
+//    public String showSummaryEdit(HttpSession session, Model model) {
+//        ResumeDocument resume = getOrCreateResume(session);
+//        Map<String, String> sections = (Map<String, String>) session.getAttribute("rawSections");
+//
+//        // If we have raw sections but no parsed summary, try to extract it
+//        if ((resume.getSummary() == null || resume.getSummary().getBulletPoints() == null)
+//                && sections != null && sections.containsKey("SUMMARY")) {
+//            Summary summary = summaryExtractor.extract(sections.get("SUMMARY"));
+//            summary.setResumeId(resume.getId());
+//            resume.setSummary(summary);
+//            resumeRepository.save(resume);
+//        }
+//
+//        // Convert the summary points to a single string with line breaks
+//        String summaryText = (resume.getSummary() != null && resume.getSummary().getBulletPoints() != null)
+//                ? String.join("\n", resume.getSummary().getBulletPoints())
+//                : "";
+//
+//        model.addAttribute("summary", summaryText);
+//        return "builder-summary-edit";
+//    }
+
+    @PostMapping("/summary/rewrite")
+    @ResponseBody
+    public ResponseEntity<?> rewriteSummary(@RequestParam("text") String text) {
+        try {
+            log.debug("Received request to rewrite summary. Text length: {}", text.length());
+            Summary summary = summaryExtractor.extract(text);
+            log.debug("Successfully generated summary with {} bullet points",
+                    summary.getBulletPoints().size());
+            return ResponseEntity.ok(summary.getBulletPoints());
+        } catch (Exception e) {
+            log.error("Error rewriting summary: {}", e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Collections.singletonMap("error", "Failed to rewrite summary: " + e.getMessage()));
+        }
     }
 
     @PostMapping("/finalize")

@@ -23,9 +23,6 @@ public class ResumeDocument {
     private PersonalInfo personalInfo;
 
     private String objective;
-    private List<String> professionalSummary;
-    @DBRef
-    private Skills skills;
 
     @DBRef
     @Field("work_experience")
@@ -34,6 +31,13 @@ public class ResumeDocument {
     @DBRef
     @Field("education")
     private List<Education> education;
+
+    @DBRef
+    private Skills skills;
+
+    @DBRef
+    @Field("summary")
+    private Summary summary;
     private List<Project> projects;
     private List<Achievement> achievements;
     private List<Certificate> certificates;

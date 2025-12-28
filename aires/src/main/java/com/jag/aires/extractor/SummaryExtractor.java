@@ -2,6 +2,7 @@ package com.jag.aires.extractor;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jag.aires.model.Summary;
 import com.jag.aires.service.ai.OllamaPromptService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -9,38 +10,77 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
-@Slf4j
-public class SummaryExtractor implements ResumeSectionExtractor<List<String>> {
+public class SummaryExtractor implements ResumeSectionExtractor<Summary> {
 
     private final OllamaPromptService ollamaPromptService;
     private final ObjectMapper objectMapper;
 
     @Override
-    public List<String> extract(String sectionText) {
+    public Summary extract(String sectionText) {
+        log.debug("Extracting summary from text of length: {}", sectionText.length());
+        log.info("Extracting summary from text : {}", sectionText);
+
         String schema = """
                 {
-                  "professional_summary": [
-                    "string",
-                    "string",
-                    "string"
-                  ]
+                  "professional_summary": {
+                    "bulletPoints": [
+                      "string",
+                      "string",
+                      "string"
+                    ],
+                    "version": "string"
+                  }
                 }
                 """;
-        String response = ollamaPromptService.analyzeText(sectionText, schema);
+
         try {
-            var node = objectMapper.readTree(response);
-            return objectMapper.convertValue(node.get("professional_summary"), new TypeReference<List<String>>() {
-            });
+            log.trace("Sending text to AI for summary extraction");
+            String response = ollamaPromptService.analyzeText(sectionText, schema);
+            log.debug("Raw AI response: {}", response);
+
+            var node = objectMapper.readTree(response).get("professional_summary");
+            if (node == null) {
+                throw new IllegalStateException("Invalid response format from AI service");
+            }
+
+            Summary summary = new Summary();
+            summary.setBulletPoints(objectMapper.convertValue(
+                    node.get("bulletPoints"),
+                    new TypeReference<List<String>>() {
+                    }
+            ));
+            summary.setVersion(node.get("version").asText("v1"));
+
+            log.info("Successfully extracted summary with {} bullet points",
+                    summary.getBulletPoints().size());
+            return summary;
+
         } catch (Exception e) {
-            log.error("Error parsing summary", e);
-            return List.of(sectionText);
+            log.error("Error parsing summary from AI response: {}", e.getMessage(), e);
+            // Fallback to a basic summary if AI extraction fails
+            Summary fallback = new Summary();
+            fallback.setBulletPoints(List.of(sectionText));
+            fallback.setVersion("fallback");
+            return fallback;
         }
     }
 
     @Override
     public String getPrompt(String sectionText) {
-        return "Extract the professional summary as a list of key bullet points highlighting years of experience, technical skills, and expertise.";
+        return """
+                Extract a professional summary with the following structure:
+                1. Create 3-5 concise bullet points highlighting:
+                   - Years of experience
+                   - Core technical skills
+                   - Major achievements
+                   - Industry expertise
+                2. Each bullet should be 1-2 sentences max
+                3. Focus on measurable achievements and specific technologies
+                
+                Input text to analyze:
+                """ + sectionText;
     }
 }
