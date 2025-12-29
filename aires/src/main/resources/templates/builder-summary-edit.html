@@ -75,6 +75,7 @@
 
             <div style="margin-top: 2rem;">
                 <form th:action="@{/builder/summary/save}" method="post" id="summaryForm">
+                    <input type="hidden" id="redirectTo" name="redirectTo" value="summary">
                     <div style="position: relative; margin-bottom: 2rem;">
                         <button type="button" id="aiRewriteBtn" class="btn btn-outline" style="position: absolute; right: 1rem; top: 1rem; font-size: 0.75rem; padding: 0.5rem 1rem;" onclick="rewriteWithAI()">
                             <span style="margin-right:0.5rem;">🪄</span> AI Re-write
@@ -88,8 +89,8 @@
 
                     <div class="full-width" style="display: flex; justify-content: space-between; margin-top: 4rem; gap: 1rem;">
                         <a th:href="@{/builder/summary}" class="btn btn-outline" style="padding: 0.75rem 2rem; flex: 1;">Back</a>
-                        <button type="button" class="btn btn-outline" style="padding: 0.75rem 2rem; flex: 1;" onclick="saveAndReturn()">Save & Return</button>
-                        <button type="submit" class="btn btn-primary" style="padding: 0.75rem 2rem; flex: 1;">Continue</button>
+                        <button type="button" class="btn btn-outline" style="padding: 0.75rem 2rem; flex: 1;" onclick="submitForm('summary')">Save & Return</button>
+                        <button type="button" class="btn btn-primary" style="padding: 0.75rem 2rem; flex: 1;" onclick="submitForm('next')">Continue</button>
                     </div>
                 </form>
             </div>
@@ -171,9 +172,16 @@
         `;
         document.head.appendChild(style);
         
-        function saveAndReturn() {
+        function submitForm(action) {
             const form = document.getElementById('summaryForm');
-            form.action = '/builder/summary/save';
+            const redirectTo = document.getElementById('redirectTo');
+            
+            if (action === 'summary') {
+                redirectTo.value = 'summary';
+            } else {
+                redirectTo.value = 'next';
+            }
+            
             form.submit();
         }
     </script>

@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Projects - CVisionAI</title>
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+    <link rel="stylesheet" href="../static/css/main.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <style>
+    /* Modern Button Styles (Shared) */
+    .btn-modern {
+        padding: 0.75rem 1.5rem;
+        border-radius: 0.75rem;
+        font-weight: 600;
+        letter-spacing: 0.01em;
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        border: none;
+        cursor: pointer;
+        text-decoration: none;
+    }
+
+    .btn-modern-primary {
+        background: linear-gradient(135deg, #4f46e5 0%, #4338ca 100%);
+        color: white;
+        box-shadow: 0 4px 6px -1px rgba(79, 70, 229, 0.2), 0 2px 4px -1px rgba(79, 70, 229, 0.1);
+    }
+
+    .btn-modern-primary:hover {
+        box-shadow: 0 10px 15px -3px rgba(79, 70, 229, 0.3);
+        transform: translateY(-1px);
+        color: white;
+    }
+
+    .btn-modern-outline-secondary {
+        background: transparent;
+        border: 1px solid #e2e8f0;
+        color: #475569;
+    }
+
+    .btn-modern-outline-secondary:hover {
+        background: #f8fafc;
+        border-color: #cbd5e1;
+        color: #1e293b;
+    }
+    
+    :root {
+        --text-muted: #64748b;
+        --highlight: rgba(79, 70, 229, 0.2);
+    }
+    
+    .d-flex {
+        display: flex;
+    }
+    
+    .flex-column {
+        flex-direction: column;
+    }
+    
+    .flex-md-row {
+        flex-direction: row;
+    }
+    
+    .justify-content-center {
+        justify-content: center;
+    }
+    
+    .align-items-center {
+        align-items: center;
+    }
+    
+    .gap-3 {
+        gap: 1rem;
+    }
+    
+    .mb-5 {
+        margin-bottom: 3rem;
+    }
+    
+    @media (min-width: 768px) {
+        .flex-md-row {
+            flex-direction: row;
+        }
+    }
+    </style>
+</head>
+<body>
+    <div class="builder-layout">
+        <aside class="sidebar">
+            <div class="logo" style="font-size: 1.5rem; font-weight: 800; margin-bottom: 2rem;">CVisionAI</div>
+            <ul class="progress-list">
+                <li class="progress-item completed">
+                    <span class="progress-dot">✓</span>
+                    <span>Upload</span>
+                </li>
+                <li class="progress-item completed">
+                    <span class="progress-dot">✓</span>
+                    <span>Basics</span>
+                </li>
+                <li class="progress-item completed">
+                    <span class="progress-dot">✓</span>
+                    <span>Experience</span>
+                </li>
+                <li class="progress-item completed">
+                    <span class="progress-dot">✓</span>
+                    <span>Education</span>
+                </li>
+                <li class="progress-item completed">
+                    <span class="progress-dot">✓</span>
+                    <span>Skills</span>
+                </li>
+                <li class="progress-item completed">
+                    <span class="progress-dot">✓</span>
+                    <span>Summary</span>
+                </li>
+                <li class="progress-item active">
+                    <span class="progress-dot">7</span>
+                    <span>Projects</span>
+                </li>
+                <li class="progress-item">
+                    <span class="progress-dot">8</span>
+                    <span>Certificates</span>
+                </li>
+                <li class="progress-item">
+                    <span class="progress-dot">9</span>
+                    <span>Achievements</span>
+                </li>
+                <li class="progress-item">
+                    <span class="progress-dot">10</span>
+                    <span>Finalize</span>
+                </li>
+            </ul>
+            <div style="margin-top: auto; padding: 1rem; background: #334155; border-radius: 0.5rem; display: flex; align-items: center; gap: 1rem;">
+                <div style="position: relative; width: 40px; height: 40px;">
+                    <svg viewBox="0 0 36 36" style="transform: rotate(-90deg);">
+                        <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#475569" stroke-width="3" />
+                        <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#10b981" stroke-width="3" stroke-dasharray="70, 100" />
+                    </svg>
+                    <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 0.75rem; font-weight: 600; color: white;">70%</div>
+                </div>
+                <div>
+                    <div style="font-size: 0.75rem; font-weight: 500; color: #94a3b8;">Profile Strength</div>
+                    <div style="font-size: 0.875rem; font-weight: 600; color: white;">Good</div>
+                </div>
+            </div>
+        </aside>
+
+        <main class="builder-main" style="display: flex; flex-direction: column; justify-content: center; position: relative;">
+            <div style="max-width: 600px;">
+                <p style="color: var(--text-muted); font-size: 1rem; margin-bottom: 0.5rem;">Showcase your work → Projects</p>
+                <h2 style="font-size: 3rem; font-weight: 800; line-height: 1.1; margin-bottom: 2rem;">Highlight your <span style="position: relative; z-index: 1;">projects<span style="position: absolute; bottom: 8px; left: 0; width: 100%; height: 8px; background: var(--highlight); z-index: -1;"></span></span></h2>
+                
+                <p style="color: #64748b; font-size: 1.125rem; line-height: 1.6; margin-bottom: 2.5rem;">
+                    Add projects that demonstrate your skills and experience. Include personal, academic, or professional work that showcases your abilities.
+                </p>
+
+                <div class="d-flex justify-content-between mt-5">
+                    <a th:href="@{/builder/summary}" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-left me-2"></i> Back to Summary
+                    </a>
+                    <a th:href="@{/builder/projects/list}" class="btn btn-primary">
+                        Continue <i class="bi bi-arrow-right ms-2"></i>
+                    </a>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+</html>
+            </div>
+        </aside>
+
+        <main class="builder-main" style="display: flex; flex-direction: column; justify-content: center; position: relative;">
+            <div style="max-width: 600px;">
+                <p style="color: var(--text-muted); font-size: 1rem; margin-bottom: 0.5rem;">Showcase your work</p>
+                <h2 style="font-size: 3rem; font-weight: 800; line-height: 1.1; margin-bottom: 2rem;">Add your <span style="position: relative; z-index: 1;">projects<span style="position: absolute; bottom: 8px; left: 0; width: 100%; height: 8px; background: var(--highlight); z-index: -1;"></span></span></h2>
+                
+                <div style="display: flex; align-items: flex-start; gap: 1rem; background: #f8fafc; padding: 1.5rem; border-radius: 1rem; margin-bottom: 3rem;">
+                    <div style="font-size: 1.5rem;">🚀</div>
+                    <p style="color: var(--text-muted);">Projects demonstrate your practical skills. Add key projects, mention your role, tools used, and the impact you made.</p>
+                </div>
+
+                <div class="full-width" style="display: flex; justify-content: space-between; align-items: center; margin-top: 4rem;">
+                    <a th:href="@{/builder/summary}" class="btn-modern btn-modern-outline-secondary" style="padding: 0.75rem 3rem;">Back</a>
+                    <a th:href="@{/builder/projects/list}" class="btn-modern btn-modern-primary">
+                        Start Adding Projects
+                        <i class="bi bi-arrow-right ms-2"></i>
+                    </a>
+                </div>
+            </div>
+        </main>
+        
+        <!-- Reuse Preview Sidebar if needed, keeping simple for landing -->
+    </div>
+</body>
+</html>

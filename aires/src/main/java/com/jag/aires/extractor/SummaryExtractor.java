@@ -27,8 +27,6 @@ public class SummaryExtractor implements ResumeSectionExtractor<Summary> {
                 {
                   "professional_summary": {
                     "bulletPoints": [
-                      "string",
-                      "string",
                       "string"
                     ],
                     "version": "string"

@@ -38,6 +38,9 @@ public class ResumeDocument {
     @DBRef
     @Field("summary")
     private Summary summary;
+    
+    @DBRef
+    @Field("projects")
     private List<Project> projects;
     private List<Achievement> achievements;
     private List<Certificate> certificates;

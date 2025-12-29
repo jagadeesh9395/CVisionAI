@@ -3,10 +3,10 @@ package com.jag.aires.controller;
 import com.jag.aires.exception.ResourceNotFoundException;
 import com.jag.aires.extractor.*;
 import com.jag.aires.model.*;
+import com.jag.aires.repository.ProjectRepository;
 import com.jag.aires.repository.*;
 import com.jag.aires.service.ResumeSectionSplitterService;
 import com.jag.aires.util.ExperiencePeriod;
-import com.mongodb.DuplicateKeyException;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -1113,10 +1113,12 @@ public class ResumeBuilderController {
         return "builder-summary-edit";
     }
 
-    @PostMapping("/summary")
-    public String saveSummary(@RequestParam("summary") String summaryText,
-                              HttpSession session,
-                              RedirectAttributes redirectAttributes) {
+    @PostMapping("/summary/save")
+    public String saveSummary(
+            @RequestParam("summary") String summaryText,
+            @RequestParam(value = "redirectTo", defaultValue = "summary") String redirectTo,
+            HttpSession session,
+            RedirectAttributes redirectAttributes) {
         try {
             ResumeDocument resume = getOrCreateResume(session);
             log.info("Saving summary for resume ID: {}", resume.getId());
@@ -1137,7 +1139,7 @@ public class ResumeBuilderController {
             if (summary.getId() == null) {
                 summary = summaryRepository.save(summary);
                 resume.setSummary(summary);
-                resumeRepository.save(resume);
+                resume = resumeRepository.save(resume);
             } else {
                 summaryRepository.save(summary);
             }
@@ -1147,36 +1149,19 @@ public class ResumeBuilderController {
             log.info("Successfully saved summary with ID: {}", summary.getId());
 
             redirectAttributes.addFlashAttribute("success", "Summary saved successfully!");
+
+            // Redirect based on the action
+            if ("next".equals(redirectTo)) {
+                return "redirect:/builder/projects"; // or the next step in your flow
+            }
+            return "redirect:/builder/summary";
+
         } catch (Exception e) {
             log.error("Error saving summary: {}", e.getMessage(), e);
             redirectAttributes.addFlashAttribute("error", "Failed to save summary. Please try again.");
+            return "redirect:/builder/summary-edit";
         }
-        return "redirect:/builder/summary";
     }
-
-//    @GetMapping("/summary-edit")
-//    @SuppressWarnings("unchecked")
-//    public String showSummaryEdit(HttpSession session, Model model) {
-//        ResumeDocument resume = getOrCreateResume(session);
-//        Map<String, String> sections = (Map<String, String>) session.getAttribute("rawSections");
-//
-//        // If we have raw sections but no parsed summary, try to extract it
-//        if ((resume.getSummary() == null || resume.getSummary().getBulletPoints() == null)
-//                && sections != null && sections.containsKey("SUMMARY")) {
-//            Summary summary = summaryExtractor.extract(sections.get("SUMMARY"));
-//            summary.setResumeId(resume.getId());
-//            resume.setSummary(summary);
-//            resumeRepository.save(resume);
-//        }
-//
-//        // Convert the summary points to a single string with line breaks
-//        String summaryText = (resume.getSummary() != null && resume.getSummary().getBulletPoints() != null)
-//                ? String.join("\n", resume.getSummary().getBulletPoints())
-//                : "";
-//
-//        model.addAttribute("summary", summaryText);
-//        return "builder-summary-edit";
-//    }
 
     @PostMapping("/summary/rewrite")
     @ResponseBody
@@ -1192,6 +1177,124 @@ public class ResumeBuilderController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(Collections.singletonMap("error", "Failed to rewrite summary: " + e.getMessage()));
         }
+    }
+    private final ProjectRepository projectRepository;
+    private final ProjectExtractor projectExtractor;
+
+    // In ResumeBuilderController.java
+
+    @GetMapping("/projects")
+    public String showProjects(HttpSession session, Model model) {
+        ResumeDocument resume = getOrCreateResume(session);
+        model.addAttribute("resume", resume);
+        return "builder-projects";
+    }
+
+    @GetMapping("/projects/list")
+    @SuppressWarnings("unchecked")
+    public String listProjects(HttpSession session, Model model) {
+        ResumeDocument resume = getOrCreateResume(session);
+        Map<String, String> sections = (Map<String, String>) session.getAttribute("rawSections");
+        
+        // If no projects exist but we have a PROJECTS section, extract projects
+        if ((resume.getProjects() == null || resume.getProjects().isEmpty()) 
+                && sections != null && sections.containsKey("PROJECTS")) {
+            List<Project> extractedProjects = projectExtractor.extract(sections.get("PROJECTS"));
+            if (!extractedProjects.isEmpty()) {
+                resume.setProjects(extractedProjects);
+                resume = resumeRepository.save(resume);
+                session.setAttribute("resumeData", resume);
+            }
+        }
+        
+        model.addAttribute("projects", resume.getProjects() != null ? resume.getProjects() : new ArrayList<Project>());
+        return "builder-projects-list";
+    }
+
+    @PostMapping("/projects/extract")
+    public String extractProjects(HttpSession session, RedirectAttributes redirectAttributes) {
+        try {
+            ResumeDocument resume = getOrCreateResume(session);
+            @SuppressWarnings("unchecked")
+            Map<String, String> sections = (Map<String, String>) session.getAttribute("rawSections");
+            
+            if (sections != null && sections.containsKey("PROJECTS")) {
+                List<Project> extractedProjects = projectExtractor.extract(sections.get("PROJECTS"));
+                if (!extractedProjects.isEmpty()) {
+                    resume.setProjects(extractedProjects);
+                    resume = resumeRepository.save(resume);
+                    session.setAttribute("resumeData", resume);
+                    redirectAttributes.addFlashAttribute("success", "Successfully extracted " + extractedProjects.size() + " projects from your resume!");
+                } else {
+                    redirectAttributes.addFlashAttribute("info", "No projects could be extracted from your resume.");
+                }
+            } else {
+                redirectAttributes.addFlashAttribute("info", "No project section found in your resume.");
+            }
+        } catch (Exception e) {
+            log.error("Error extracting projects: ", e);
+            redirectAttributes.addFlashAttribute("error", "Error extracting projects: " + e.getMessage());
+        }
+        return "redirect:/builder/projects/list";
+    }
+    
+    @GetMapping("/projects/add")
+    public String showAddProjectForm(Model model) {
+        model.addAttribute("project", new Project());
+        return "builder-projects-form";
+    }
+
+    @GetMapping("/projects/edit/{index}")
+    public String showEditProjectForm(@PathVariable int index, HttpSession session, Model model) {
+        ResumeDocument resume = getOrCreateResume(session);
+        if (resume.getProjects() != null && index >= 0 && index < resume.getProjects().size()) {
+            model.addAttribute("project", resume.getProjects().get(index));
+            model.addAttribute("projectIndex", index);
+        } else {
+            model.addAttribute("project", new Project());
+        }
+        return "builder-projects-form";
+    }
+
+    @PostMapping("/projects/save")
+    public String saveProject(
+            @ModelAttribute Project project,
+            @RequestParam(required = false) Integer projectIndex,
+            HttpSession session,
+            RedirectAttributes redirectAttributes) {
+        try {
+            ResumeDocument resume = getOrCreateResume(session);
+            List<Project> projects = resume.getProjects() != null ?
+                    new ArrayList<>(resume.getProjects()) : new ArrayList<>();
+
+            if (projectIndex != null && projectIndex >= 0 && projectIndex < projects.size()) {
+                projects.set(projectIndex, project);
+            } else {
+                projects.add(project);
+            }
+
+            resume.setProjects(projects);
+            resumeRepository.save(resume);
+
+            redirectAttributes.addFlashAttribute("success", "Project saved successfully!");
+            return "redirect:/builder/projects/list";
+        } catch (Exception e) {
+            log.error("Error saving project", e);
+            redirectAttributes.addFlashAttribute("error", "Failed to save project: " + e.getMessage());
+            return "redirect:/builder/projects" + (projectIndex != null ? "/edit/" + projectIndex : "/add");
+        }
+    }
+
+    @PostMapping("/projects/delete/{index}")
+    public String deleteProject(@PathVariable int index, HttpSession session) {
+        ResumeDocument resume = getOrCreateResume(session);
+        if (resume.getProjects() != null && index >= 0 && index < resume.getProjects().size()) {
+            List<Project> projects = new ArrayList<>(resume.getProjects());
+            projects.remove(index);
+            resume.setProjects(projects);
+            resumeRepository.save(resume);
+        }
+        return "redirect:/builder/projects/list";
     }
 
     @PostMapping("/finalize")

@@ -16,103 +16,75 @@
             <h1>Upload your resume</h1>
           </header>
 
-          <div class="upload-grid">
-            <form id="uploadForm" th:action="@{/builder/upload}" method="post" enctype="multipart/form-data" style="display: none;">
-              <input type="file" name="file" id="fileInput" accept=".pdf,.doc,.docx,.txt,.rtf,.html" onchange="handleFileSelect(this)">
-            </form>
-            
-            <div class="file-acceptance-area">
-              <div class="drop-zone" id="dropZone">
-                <div class="upload-icon">
-                  <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                    <polyline points="17 8 12 3 7 8"></polyline>
-                    <line x1="12" y1="3" x2="12" y2="15"></line>
-                  </svg>
-                </div>
-                <p id="dropText">Drag & drop your file here or <span class="browse-link" onclick="document.getElementById('fileInput').click()">browse</span></p>
-                <p style="font-size: 0.75rem; color: #94a3b8; margin-top: 1rem">
-                  Acceptable file types: DOC, DOCX, PDF, HTML, RTF, TXT
-                </p>
-                
-                <!-- File info will be displayed here -->
-                <div id="fileInfo" class="file-info" style="display: none; margin-top: 1.5rem;">
-                  <div class="file-details">
-                    <div class="file-icon">
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"></path>
-                        <polyline points="14 2 14 8 20 8"></polyline>
-                      </svg>
-                    </div>
-                    <div class="file-meta">
-                      <span id="fileName" class="file-name"></span>
-                      <span id="fileSize" class="file-size"></span>
-                    </div>
-                  </div>
-                  <button type="button" class="btn btn-ghost btn-sm" onclick="clearFile()">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                      <line x1="18" y1="6" x2="6" y2="18"></line>
-                      <line x1="6" y1="6" x2="18" y2="18"></line>
+          <div class="upload-container">
+            <div class="browse-section">
+              <button class="browse-btn" onclick="document.getElementById('fileInput').click()">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                  <polyline points="17 8 12 3 7 8"></polyline>
+                  <line x1="12" y1="3" x2="12" y2="15"></line>
+                </svg>
+                <span>Browse your computer</span>
+              </button>
+              <p class="file-types">Acceptable file types: DOC, DOCX, PDF, HTML, RTF, TXT</p>
+            </div>
+
+            <div class="divider">
+              <span>or</span>
+            </div>
+
+            <div class="drop-zone" id="dropZone">
+              <p>Drag & drop your file here</p>
+              
+              <!-- File info will be displayed here -->
+              <div id="fileInfo" class="file-info">
+                <div class="file-details">
+                  <div class="file-icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"></path>
+                      <polyline points="14 2 14 8 20 8"></polyline>
                     </svg>
-                  </button>
+                  </div>
+                  <div class="file-meta">
+                    <span id="fileName" class="file-name"></span>
+                    <span id="fileSize" class="file-size"></span>
+                  </div>
                 </div>
+                <button type="button" class="btn-remove" onclick="clearFile()">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                  </svg>
+                </button>
               </div>
             </div>
 
-            <!-- Removed old drop zone as it's now part of the file-acceptance-area -->
-
-            <div class="or-divider">OR</div>
-
             <div class="cloud-options">
-              <button class="btn btn-outline" disabled style="opacity: 0.5;">
-                <img
-                  src="https://upload.wikimedia.org/wikipedia/commons/7/78/Dropbox_Icon.svg"
-                  width="20"
-                  alt="Dropbox"
-                />
-                Dropbox
+              <button class="cloud-btn" disabled>
+                <img src="https://upload.wikimedia.org/wikipedia/commons/7/78/Dropbox_Icon.svg" alt="Dropbox">
+                <span>Dropbox</span>
               </button>
-              <button class="btn btn-outline" disabled style="opacity: 0.5;">
-                <img
-                  src="https://upload.wikimedia.org/wikipedia/commons/1/12/Google_Drive_icon_%282020%29.svg"
-                  width="20"
-                  alt="Google Drive"
-                />
-                Google Drive
+              <button class="cloud-btn" disabled>
+                <img src="https://upload.wikimedia.org/wikipedia/commons/1/12/Google_Drive_icon_%282020%29.svg" alt="Google Drive">
+                <span>Google Drive</span>
               </button>
             </div>
           </div>
 
+          <form id="uploadForm" th:action="@{\/builder\/upload}" method="post" enctype="multipart/form-data" style="display: none;">
+            <input type="file" name="file" id="fileInput" accept=".pdf,.doc,.docx,.txt,.rtf,.html" onchange="handleFileSelect(this)">
+          </form>
+
           <div class="footer-actions">
-            <a
-              th:href="@{/builder-basics}"
-              class="btn btn-ghost"
-              style="color: var(--primary); font-weight: 600"
-              >Create a new resume</a
-            >
-            <button
-              id="uploadBtn"
-              class="btn btn-primary"
-              style="
-                background-color: #e2e8f0;
-                color: #94a3b8;
-                cursor: not-allowed;
-              "
-              disabled
-              onclick="submitUpload()"
-            >
+            <a th:href="@{\/builder-basics}" class="btn btn-ghost">
+              Create a new resume
+            </a>
+            <button id="uploadBtn" class="btn btn-primary" disabled>
               Upload
             </button>
           </div>
 
-          <footer
-            style="
-              margin-top: 4rem;
-              font-size: 0.75rem;
-              color: #64748b;
-              text-align: center;
-            "
-          >
+          <footer class="legal-text">
             By clicking any of the actions listed here, you agree to our
             <a href="#">Terms of Use</a> and <a href="#">Privacy Policy</a>.
           </footer>
@@ -121,49 +93,117 @@
     </div>
 
     <style>
-      .file-acceptance-area {
-        width: 100%;
+      .upload-section {
         max-width: 500px;
         margin: 0 auto;
+        padding: 2rem 1.5rem;
+      }
+      
+      .page-header {
+        text-align: center;
+        margin-bottom: 2.5rem;
+      }
+      
+      .page-header h1 {
+        font-size: 2rem;
+        font-weight: 600;
+        color: #1f2937;
+        margin-bottom: 0.5rem;
+      }
+      
+      .upload-container {
+        background: #fff;
+        border-radius: 12px;
+        padding: 2rem;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        margin-bottom: 1.5rem;
+      }
+      
+      .browse-section {
+        text-align: center;
+        margin-bottom: 1.5rem;
+      }
+      
+      .browse-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: #f59e0b;
+        color: #1f2937;
+        border: none;
+        border-radius: 8px;
+        padding: 0.75rem 1.5rem;
+        font-weight: 500;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        margin-bottom: 0.75rem;
+      }
+      
+      .browse-btn:hover {
+        background: #d97706;
+      }
+      
+      .browse-btn svg {
+        width: 20px;
+        height: 20px;
+      }
+      
+      .file-types {
+        font-size: 0.875rem;
+        color: #6b7280;
+        margin: 0;
+      }
+      
+      .divider {
+        display: flex;
+        align-items: center;
+        text-align: center;
+        color: #9ca3af;
+        font-size: 0.875rem;
+        margin: 1.5rem 0;
+      }
+      
+      .divider::before,
+      .divider::after {
+        content: '';
+        flex: 1;
+        border-bottom: 1px solid #e5e7eb;
+      }
+      
+      .divider:not(:empty)::before {
+        margin-right: 1rem;
+      }
+      
+      .divider:not(:empty)::after {
+        margin-left: 1rem;
       }
       
       .drop-zone {
-        border: 2px dashed #e2e8f0;
-        border-radius: 0.5rem;
-        padding: 2rem;
+        border: 2px dashed #d1d5db;
+        border-radius: 8px;
+        padding: 2rem 1rem;
         text-align: center;
         cursor: pointer;
         transition: all 0.2s ease;
-        background-color: #fff;
+        background-color: #f9fafb;
+        margin-bottom: 1.5rem;
       }
       
-      .drop-zone:hover {
-        border-color: #cbd5e1;
-      }
-      
-      .upload-icon {
-        margin-bottom: 1rem;
-        color: #64748b;
-      }
-      
-      .browse-link {
-        color: #3b82f6;
-        text-decoration: underline;
-        cursor: pointer;
-      }
-      
-      .browse-link:hover {
-        color: #2563eb;
+      .drop-zone p {
+        margin: 0;
+        color: #4b5563;
+        font-size: 0.9375rem;
       }
       
       .file-info {
-        display: flex;
+        display: none;
         align-items: center;
-        justify-content: space-between;
-        background-color: #f8fafc;
-        border: 1px solid #e2e8f0;
-        border-radius: 0.5rem;
-        padding: 0.75rem 1rem;
+        background: #f3f4f6;
+        border: 1px solid #e5e7eb;
+        border-radius: 6px;
+        padding: 0.5rem 0.75rem;
+        margin-top: 1rem;
       }
       
       .file-details {
@@ -174,37 +214,133 @@
       }
       
       .file-icon {
-        color: #64748b;
+        color: #6b7280;
+      }
+      
+      .file-icon svg {
+        width: 20px;
+        height: 20px;
       }
       
       .file-meta {
         display: flex;
         flex-direction: column;
-        gap: 0.25rem;
+        gap: 0.125rem;
       }
       
       .file-name {
         font-weight: 500;
-        color: #1e293b;
+        color: #1f2937;
         font-size: 0.875rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 200px;
       }
       
       .file-size {
         font-size: 0.75rem;
-        color: #64748b;
+        color: #6b7280;
       }
       
-      .btn:disabled {
-        opacity: 0.7;
+      .btn-remove {
+        background: none;
+        border: none;
+        color: #9ca3af;
+        cursor: pointer;
+        padding: 0.25rem;
+        border-radius: 4px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      
+      .btn-remove:hover {
+        background: #e5e7eb;
+        color: #6b7280;
+      }
+      
+      .cloud-options {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+      }
+      
+      .cloud-btn {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        background: #fff;
+        border: 1px solid #e5e7eb;
+        border-radius: 6px;
+        padding: 0.75rem 1rem;
+        font-size: 0.9375rem;
+        color: #1f2937;
         cursor: not-allowed;
+        opacity: 0.7;
+      }
+      
+      .cloud-btn img {
+        width: 20px;
+        height: 20px;
+        object-fit: contain;
+      }
+      
+      .footer-actions {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 2rem;
+      }
+      
+      .btn {
+        padding: 0.75rem 1.5rem;
+        border-radius: 6px;
+        font-weight: 500;
+        font-size: 0.9375rem;
+        cursor: pointer;
+        transition: all 0.2s ease;
       }
       
       .btn-ghost {
         background: transparent;
         border: none;
-        color: #64748b;
-        padding: 0.25rem;
-        border-radius: 0.25rem;
+        color: #4f46e5;
+        font-weight: 500;
+      }
+      
+      .btn-ghost:hover {
+        text-decoration: underline;
+      }
+      
+      .btn-primary {
+        background: #e5e7eb;
+        color: #9ca3af;
+        border: none;
+      }
+      
+      .btn-primary:not(:disabled):hover {
+        background: #d1d5db;
+      }
+      
+      .btn-primary:disabled {
+        cursor: not-allowed;
+        opacity: 0.7;
+      }
+      
+      .legal-text {
+        text-align: center;
+        font-size: 0.75rem;
+        color: #6b7280;
+        margin-top: 2rem;
+      }
+      
+      .legal-text a {
+        color: #4f46e5;
+        text-decoration: none;
+      }
+      
+      .legal-text a:hover {
+        text-decoration: underline;
       }
       
       .btn-ghost:hover {
@@ -228,52 +364,117 @@
         return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
       }
 
+      // Get DOM elements
+      const fileInput = document.getElementById('fileInput');
+      const fileInfo = document.getElementById('fileInfo');
+      const fileName = document.getElementById('fileName');
+      const fileSize = document.getElementById('fileSize');
+      const uploadBtn = document.getElementById('uploadBtn');
+      const dropZone = document.getElementById('dropZone');
+      
       let selectedFile = null;
 
+      // Format file size
+      function formatFileSize(bytes) {
+        if (bytes === 0) return '0 Bytes';
+        const k = 1024;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+      }
+
+      // Handle file selection
       function handleFileSelect(input) {
         if (input.files && input.files[0]) {
-          const file = input.files[0];
-          fileName.textContent = file.name;
-          fileSize.textContent = formatFileSize(file.size);
+          selectedFile = input.files[0];
+          
+          // Update file info display
+          const displayName = selectedFile.name.length > 30 
+            ? selectedFile.name.substring(0, 27) + '...' 
+            : selectedFile.name;
+            
+          fileName.textContent = displayName;
+          fileSize.textContent = formatFileSize(selectedFile.size);
           fileInfo.style.display = 'flex';
-          // Enable the upload button when a file is selected
+          
+          // Enable upload button
           uploadBtn.disabled = false;
-          uploadBtn.style.opacity = '1';
-          uploadBtn.style.backgroundColor = '#f59e0b';
-          uploadBtn.style.color = '#1f2937';
+          uploadBtn.style.backgroundColor = '#4f46e5';
+          uploadBtn.style.color = '#fff';
           uploadBtn.style.cursor = 'pointer';
         }
       }
 
+      // Clear selected file
       function clearFile() {
+        selectedFile = null;
         fileInput.value = '';
         fileInfo.style.display = 'none';
-        uploadBtn.disabled = true;
-        uploadBtn.style.opacity = '0.5';
-      }
-
-      function enableUploadButton() {
-        uploadBtn.disabled = false;
-        uploadBtn.style.opacity = '1';
-        uploadBtn.onclick = submitUpload;
-      }
-
-      function submitUpload() {
-        const form = document.getElementById('uploadForm');
-        const fileInput = document.getElementById('fileInput');
         
-        if (fileInput.files && fileInput.files[0]) {
-          // Disable the upload button and show loading state
+        // Disable upload button
+        uploadBtn.disabled = true;
+        uploadBtn.style.backgroundColor = '#e5e7eb';
+        uploadBtn.style.color = '#9ca3af';
+        uploadBtn.style.cursor = 'not-allowed';
+      }
+
+      // Submit the form
+      function submitUpload() {
+        if (selectedFile) {
+          // Show loading state
+          const originalText = uploadBtn.innerHTML;
           uploadBtn.disabled = true;
-          uploadBtn.style.opacity = '0.7';
-          uploadBtn.style.cursor = 'not-allowed';
-          uploadBtn.innerHTML = '<span class="spinner"></span> Uploading...';
+          uploadBtn.innerHTML = 'Uploading...';
           
           // Submit the form
-          form.submit();
+          document.getElementById('uploadForm').submit();
           
           // Prevent multiple submissions
           uploadBtn.onclick = null;
+        }
+      }
+      
+      // Set up event listeners
+      uploadBtn.addEventListener('click', submitUpload);
+      
+      // Handle drag and drop
+      ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+        dropZone.addEventListener(eventName, preventDefaults, false);
+      });
+      
+      function preventDefaults(e) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+      
+      ['dragenter', 'dragover'].forEach(eventName => {
+        dropZone.addEventListener(eventName, highlight, false);
+      });
+      
+      ['dragleave', 'drop'].forEach(eventName => {
+        dropZone.addEventListener(eventName, unhighlight, false);
+      });
+      
+      function highlight() {
+        dropZone.style.borderColor = '#4f46e5';
+        dropZone.style.backgroundColor = '#f0f9ff';
+      }
+      
+      function unhighlight() {
+        dropZone.style.borderColor = '#d1d5db';
+        dropZone.style.backgroundColor = '#f9fafb';
+      }
+      
+      // Handle dropped files
+      dropZone.addEventListener('drop', handleDrop, false);
+      
+      function handleDrop(e) {
+        const dt = e.dataTransfer;
+        const files = dt.files;
+        
+        if (files.length) {
+          fileInput.files = files;
+          handleFileSelect(fileInput);
         }
       }
 

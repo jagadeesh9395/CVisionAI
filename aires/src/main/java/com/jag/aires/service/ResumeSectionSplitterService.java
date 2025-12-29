@@ -11,6 +11,7 @@ public class ResumeSectionSplitterService {
 
     private static final Map<String, Pattern> SECTION_PATTERNS = new HashMap<>();
 
+    // Update the static block in ResumeSectionSplitterService.java
     static {
         SECTION_PATTERNS.put("SUMMARY", Pattern.compile("(?i)(summary|professional summary|objective|profile)"));
         SECTION_PATTERNS.put("EXPERIENCE",
@@ -18,6 +19,12 @@ public class ResumeSectionSplitterService {
         SECTION_PATTERNS.put("EDUCATION",
                 Pattern.compile("(?i)(education|academic background|educational qualification)"));
         SECTION_PATTERNS.put("SKILLS", Pattern.compile("(?i)(skills|technical skills|expertise|competencies)"));
+        SECTION_PATTERNS.put("PROJECTS",
+                Pattern.compile("(?i)(projects|personal projects|academic projects|project experience)"));
+        SECTION_PATTERNS.put("ACHIEVEMENTS",
+                Pattern.compile("(?i)(achievements|awards|honors|accomplishments)"));
+        SECTION_PATTERNS.put("CERTIFICATIONS",
+                Pattern.compile("(?i)(certifications|certificates|professional development|training)"));
     }
 
     public Map<String, String> splitSections(String rawText) {
