@@ -5,7 +5,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jag.aires.model.WorkExperience;
-import com.jag.aires.service.ai.OllamaPromptService;
+import com.jag.aires.service.ai.GroqPromptService;
 import com.jag.aires.util.ExperiencePeriod;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,7 +22,7 @@ import java.util.List;
 @Slf4j
 public class ExperienceExtractor implements ResumeSectionExtractor<List<WorkExperience>> {
 
-  private final OllamaPromptService ollamaPromptService;
+  private final GroqPromptService groqPromptService;
   private final ObjectMapper objectMapper;
   private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("MM/yyyy");
 
@@ -32,24 +32,26 @@ public class ExperienceExtractor implements ResumeSectionExtractor<List<WorkExpe
       return new ArrayList<>();
     }
     String schema = """
-                {
-                  "work_experience": [
-                    {
-                      "company": "string (required)",
-                      "role": "string (required)",
-                      "startDate": "string (format: MM/YYYY, required)",
-                      "endDate": "string (format: MM/YYYY or 'Present', required)",
-                      "location": "string (optional)",
-                      "description": ["string (optional, array of responsibilities/achievements]"
-                    }
-                  ]
-                }
-                """;
+        {
+          "work_experience": [
+            {
+              "company": "string (required)",
+              "role": "string (required)",
+              "startDate": "string (format: MM/YYYY, required)",
+              "endDate": "string (format: MM/YYYY or 'Present', required)",
+              "location": "string (optional)",
+              "description": ["string (optional, array of responsibilities/achievements]"
+            }
+          ]
+        }
+        """;
     try {
-      String response = ollamaPromptService.analyzeText(sectionText, schema);
+      String systemPrompt = "Extract work experience details from the given text. Return the response in the following JSON format:\n" + schema;
+      String response = groqPromptService.generateResponse(systemPrompt, sectionText);
       var node = objectMapper.readTree(response);
       var experiences = objectMapper.convertValue(node.get("work_experience"),
-              new TypeReference<List<WorkExperience>>() {});
+          new TypeReference<List<WorkExperience>>() {
+          });
 
       // Convert dates to ExperiencePeriod
       for (WorkExperience exp : experiences) {

@@ -2,7 +2,7 @@ package com.jag.aires.extractor;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jag.aires.model.PersonalInfo;
-import com.jag.aires.service.ai.OllamaPromptService;
+import com.jag.aires.service.ai.GroqPromptService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -15,7 +15,7 @@ import java.util.List;
 @Slf4j
 public class PersonalInfoExtractor implements ResumeSectionExtractor<PersonalInfo> {
 
-    private final OllamaPromptService ollamaPromptService;
+    private final GroqPromptService groqPromptService;
     private final ObjectMapper objectMapper;
 
     @Override
@@ -38,13 +38,14 @@ public class PersonalInfoExtractor implements ResumeSectionExtractor<PersonalInf
                 """;
 
         try {
-            String response = ollamaPromptService.analyzeText(sectionText, schema);
+            String systemPrompt = "Extract personal information from the given text. Return the response in the following JSON format:\n" + schema;
+            String response = groqPromptService.generateResponse(systemPrompt, sectionText);
             var node = objectMapper.readTree(response);
             var personalInfoNode = node.get("personal_info");
-            
+
             if (personalInfoNode != null) {
                 PersonalInfo personalInfo = new PersonalInfo();
-                
+
                 // Set fields one by one to ensure proper mapping
                 if (personalInfoNode.has("firstName")) {
                     personalInfo.setFirstName(personalInfoNode.get("firstName").asText());
@@ -78,7 +79,7 @@ public class PersonalInfoExtractor implements ResumeSectionExtractor<PersonalInf
                 if (personalInfoNode.has("pinCode")) {
                     personalInfo.setPinCode(personalInfoNode.get("pinCode").asText());
                 }
-                
+
                 return personalInfo;
             }
             return new PersonalInfo();

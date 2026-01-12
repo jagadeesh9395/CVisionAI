@@ -5,7 +5,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jag.aires.model.Education;
-import com.jag.aires.service.ai.OllamaPromptService;
+import com.jag.aires.service.ai.GroqPromptService;
 import com.jag.aires.util.ExperiencePeriod;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,7 +22,7 @@ import java.util.List;
 @Slf4j
 public class EducationExtractor implements ResumeSectionExtractor<List<Education>> {
 
-    private final OllamaPromptService ollamaPromptService;
+    private final GroqPromptService groqPromptService;
     private final ObjectMapper objectMapper;
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("MM/yyyy");
 
@@ -50,7 +50,8 @@ public class EducationExtractor implements ResumeSectionExtractor<List<Education
                 """;
 
         try {
-            String response = ollamaPromptService.analyzeText(sectionText, schema);
+            String systemPrompt = "Extract education details from the given text. Return the response in the following JSON format:\n" + schema;
+            String response = groqPromptService.generateResponse(systemPrompt, sectionText);
             JsonNode rootNode = objectMapper.readTree(response);
             JsonNode educationArray = rootNode.get("education");
 

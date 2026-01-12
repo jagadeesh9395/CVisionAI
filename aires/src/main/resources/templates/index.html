@@ -46,7 +46,7 @@
         </nav>
 
         <section class="hero-wrapper animate-fade">
-            <span class="hero-tag">Powered by Spring AI & Ollama</span>
+            <span class="hero-tag">Powered by Spring AI & Groq Cloud</span>
             <h1>Build your dream career<br>with <span style="color: var(--primary);">AI Precision.</span></h1>
             <p>The first resume builder that actually understands your experience. We use advanced LLMs to extract, analyze, and polish your professional identity.</p>
             
@@ -115,7 +115,7 @@
 
         <footer style="padding: 4rem; text-align: center; background: white; border-top: 1px solid var(--border);">
             <div class="logo" style="margin-bottom: 1rem; opacity: 0.5;">CVisionAI</div>
-            <p style="font-size: 0.875rem; color: var(--text-muted);">© 2025 CVisionAI. Built with Spring Boot 3 & Ollama.</p>
+            <p style="font-size: 0.875rem; color: var(--text-muted);">© 2025 CVisionAI. Built with Spring Boot 3 & Groq Cloud AI.</p>
         </footer>
     </div>
 
@@ -144,7 +144,7 @@
                 status.innerHTML = '● COMPLETE';
                 status.style.color = '#10b981';
             } catch (error) {
-                results.innerHTML = '<span style="color: #ef4444;">Error connecting to AI service. Ensure Ollama is running.</span>';
+                results.innerHTML = '<span style="color: #ef4444;">Error connecting to AI service. Check Groq API Key.</span>';
                 status.innerHTML = '● FAILED';
                 status.style.color = '#ef4444';
             } finally {
